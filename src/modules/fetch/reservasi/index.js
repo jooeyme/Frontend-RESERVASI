@@ -45,6 +45,15 @@ async function getBookingByRoomId(room_id) {
     }
 }
 
+async function getBookingByToolId(tool_id) {
+    try {
+        const response = await instance.get(`/booking/tool/${tool_id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
 async function editBooking(id, formData) {
     try {
         const response = await instance.patch(`/booking/${id}`, formData);
@@ -62,4 +71,13 @@ async function showBookingById(id) {
         throw new Error(error.response.data.message || "Something went wrong");
     }
 }
-export { createBookingRoom, createBookingTool,findAllBooking, findAllBookingByUserId, getBookingByRoomId, editBooking, showBookingById};
+
+async function deleteBooking (id) {
+    try {
+        const response = await instance.delete(`/booking/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+export { createBookingRoom, deleteBooking, createBookingTool,findAllBooking, findAllBookingByUserId, getBookingByRoomId, getBookingByToolId, editBooking, showBookingById};

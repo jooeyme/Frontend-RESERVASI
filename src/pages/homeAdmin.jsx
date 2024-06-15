@@ -1,9 +1,9 @@
-import Sidebar from "../components/sidebar";
+import MainLayoutAdmin from "./MainLayoutAdmin";
 
 const HomeAdmin = () => {
     return (
         <>
-            <Sidebar />
+            <MainLayoutAdmin />
         </>
     )
 }

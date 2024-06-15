@@ -1,13 +1,12 @@
-import Sidebar from "../components/sidebar.jsx";
+import MainLayoutAdmin from "./MainLayoutAdmin.jsx";
 import BookingRoomList from "../components/table/bookingRoomTable.jsx";
 
 const DaftarPeminjam = () => {
     return (
         <>
-            <Sidebar/>
-                <div className="p-4 sm:ml-64">
-                <BookingRoomList />
-                </div>
+                <MainLayoutAdmin>
+                    <BookingRoomList />
+                </MainLayoutAdmin>
             
         </>
     );

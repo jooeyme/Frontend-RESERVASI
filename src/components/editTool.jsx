@@ -102,7 +102,7 @@ const EditFormTool = () => {
     return (
       <>
       <div>
-        <div className="bg-blue-100 py-4 mt-10">
+        <div className="py-4 mt-10">
             <h1 className="text-2xl text-center font-bold">Edit Peralatan</h1>
         </div>
           <form onSubmit={handleFormSubmit} className='border border-gray-300 rounded mx-auto max-w-6xl w-full my-5 inputs space-y-6' >

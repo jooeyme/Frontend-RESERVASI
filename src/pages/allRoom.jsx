@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { findAllRoom } from '../modules/fetch/rooms';
 import RoomCard from '../components/card/roomCard';
 import DetailRoom from './detailRoom';
-import SidebarUser from '../components/sidebarUser';
+import MainLayoutUser from './MainLayoutUser';
 
 const RoomsPage = () => {
   const [room, setRooms] = useState([]);
@@ -34,10 +34,10 @@ const RoomsPage = () => {
 
   return (
     <>
-    <SidebarUser/>
-    <div className="p-4 sm:ml-64">
+    <MainLayoutUser>
+    
     <div className="container mx-auto flex flex-col">
-    <div className="bg-blue-100 py-4 mb-5">
+    <div className=" py-4 mb-5">
                 <h1 className="text-2xl text-center font-bold">Daftar Ruangan</h1>
             </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -59,7 +59,8 @@ const RoomsPage = () => {
             }
       
     </div>
-    </div>
+
+    </MainLayoutUser>
     </>
   );
 };

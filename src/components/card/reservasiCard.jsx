@@ -21,7 +21,9 @@ const ReservationCard = ({bookingData, isOpen, handleCloseClick}) => {
     booking_date, 
     start_time, 
     end_time, 
-    booking_status, 
+    booking_status,
+    desk_activity,
+    dept, 
     Room,
     Tool, 
   } = bookingData;
@@ -49,7 +51,7 @@ const ReservationCard = ({bookingData, isOpen, handleCloseClick}) => {
     </div>
     <hr className="border border-gray-600 dark:border-gray-700 border-opacity-50" />
         <div className="flex flex-col md:flex-row -mx-4 px-2 sm:px-2 lg:px-4 pt-4">
-            <div className="md:flex-1 px-4">
+            <div className="min-w-80 px-4">
                 <div className="rounded-md bg-gray-300 dark:bg-gray-700 mb-4">
                     <img className="h-48 w-full rounded-lg object-cover" src={`http://localhost:3000/images/${imageSource}`} alt={nameReserve}/>
                 </div>
@@ -86,9 +88,9 @@ const ReservationCard = ({bookingData, isOpen, handleCloseClick}) => {
             <span className="flex items-start font-bold text-gray-700 dark:text-gray-300">{peminjam}  
               <span className="text-gray-600 font-light dark:text-gray-300 ml-2">{kontak}</span>
             </span>
-            <span className="flex items-start font-semibold text-gray-700 dark:text-gray-300">Asal Departemen</span>
+            <span className="flex items-start font-semibold text-gray-700 dark:text-gray-300">{dept}</span>
             <p className="flex text-left text-gray-600 dark:text-gray-300 text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sedante justo. Integer euismod libero id mauris malesuada tincidunt.
+            {desk_activity} Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, repudiandae.
             </p>
     </div>
     </div>

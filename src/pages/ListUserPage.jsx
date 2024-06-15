@@ -1,13 +1,13 @@
 import UserList from "../components/table/ListUser";
-import Sidebar from "../components/sidebar";
+import MainLayoutAdmin from "./MainLayoutAdmin";
 
 const UserListPage = () => {
     return (
         <>
-        <Sidebar/>
-        <div className="p-4 sm:ml-64">
+        
+        <MainLayoutAdmin>
             <UserList/>
-        </div>
+        </MainLayoutAdmin>
         </>
     )
 }

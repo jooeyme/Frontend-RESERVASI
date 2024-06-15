@@ -1,32 +1,57 @@
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { FaUserCircle } from "react-icons/fa";
+import Logout from './LogOut';
+import { jwtDecode } from "jwt-decode";
+import { Link } from 'react-router-dom';
 
-const Navbar = ({ toggleSidebar }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+const NavbarUser = ({ toggleSidebar }) => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
+    const [decodeToken, setDecodeToken] = useState(null)
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
     };
-  }, [dropdownOpen]);
+    
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+        }
+    };
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+    
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const username = decoded.username; // Access the 'username' property
+          const email = decoded.email; // Access the 'email' property
+          setEmail(email);
+          setUsername(username); 
+          setDecodeToken(decoded);
+        } catch (error) {
+          console.error('Error decoding token:', error);
+          // Handle invalid or expired token gracefully (e.g., redirect to login)
+        }
+      } else {
+        // Handle the case where there is no token (e.g., redirect to login)
+        console.error('No token found');
+        // navigate to login or handle the error
+      }
+
+      if (dropdownOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+        } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [dropdownOpen]);
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -53,7 +78,7 @@ const Navbar = ({ toggleSidebar }) => {
             <a className="flex ml-2 md:mr-24">
               <img src="src/components/logo_ipb.png" className="h-8 mr-3" alt="Logo" />
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                IPB MNH Admin
+                IPB MNH
               </span>
             </a>
           </div>
@@ -71,55 +96,37 @@ const Navbar = ({ toggleSidebar }) => {
             {dropdownOpen && (
               <div
                 ref={dropdownRef}
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:bg-gray-700 dark:divide-gray-600"
+                className="absolute right-0 z-10 mt-32 w-48 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:bg-gray-700 dark:divide-gray-600"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
               >
                 <div className="px-4 py-3">
-                  <span className="block text-sm text-gray-900 dark:text-white">Kevin Ade Wijaya</span>
+                  <span className="block text-sm text-gray-900 dark:text-white">{username}</span>
                   <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                    k.abdulrahman@ipb.ac.id
+                    {email}
                   </span>
                 </div>
                 <ul className="py-1" role="none">
                   <li>
-                    <a
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Settings
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/sign-out"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Sign out
-                    </a>
+                    {!decodeToken ? (
+                      <Link to={"/login"}>
+                      <button >Login</button>
+                    </Link>
+                    ) : (
+                      <Logout />
+                  )}
                   </li>
                 </ul>
               </div>
             )}
 
-          </div>
 
+          </div>
         </div>
       </div>
     </nav>
   );
 };
 
-export default Navbar;
+export default NavbarUser;

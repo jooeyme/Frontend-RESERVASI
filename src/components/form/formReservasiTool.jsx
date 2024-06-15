@@ -8,13 +8,14 @@ import { createBookingTool } from '../../modules/fetch/reservasi';
 const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        users_id: '',
-        Tool_id: ToolId,
+        tool_id: ToolId,
         peminjam: '',
         kontak: '',
         booking_date: '',
         start_time: '',
         end_time: '',
+        desk_activity: '',
+        dept: '',
   });
 
   const [localIsOpen, setIsOpen] = useState(isOpen || true); 
@@ -59,6 +60,8 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
             booking_date: '',
             start_time: '',
             end_time: '',
+            desk_activity: '',
+            dept: '',
           });
         
         console.log('Booking successfully');
@@ -67,6 +70,10 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
             hideProgressBar: true,
             autoClose: 3000
         });
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        handleCloseClick?.(); // Call external close handler if available
+        setIsOpen(false);
 
         //setIsOpen(false);
     } catch (error) {
@@ -85,20 +92,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
     <div className={`overflow-auto max-w-md w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p- ${!localIsOpen && 'hidden'}`}>
         <form onSubmit={handleSubmit} >
             <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Data Reservasi</h5>
-            <div>
-                <label htmlFor="users_id" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
-                    Users id
-                </label>
-                <input 
-                    type="number" 
-                    name="users_id" 
-                    id="users_id"  
-                    value={formData.users_id} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="Nama Lengkap" 
-                    required />
-            </div>
+        
             <div>
                 <label htmlFor="peminjam" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Nama Penanggungjawab</label>
                 <input 
@@ -123,7 +117,34 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
                     required />
             </div>
-
+            <div>
+                <label htmlFor="dept" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
+                    Departemen
+                </label>
+                <input 
+                    type="text" 
+                    name="dept" 
+                    id="dept" 
+                    value={formData.dept} 
+                    onChange={handleChange}
+                    placeholder="departmen penyelenggara" 
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                    required />
+            </div>
+            <div>
+                <label htmlFor="desk_activity" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
+                    Kegiatan/Forum
+                </label>
+                <textarea 
+                    type="text" 
+                    name="desk_activity" 
+                    id="desk_activity" 
+                    value={formData.desk_activity} 
+                    onChange={handleChange}
+                    placeholder="Deskripsi Kegiatan " 
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                    required />
+            </div>
             <div>
                 <label htmlFor="booking_date" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Tanggal Reservasi</label>
                 <input 
@@ -138,7 +159,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
             </div>
 
             <div className='grid grid-cols-2 gap-6 py-2'>
-                <div class="col-span-2 sm:col-span-1">
+                <div className="col-span-2 sm:col-span-1">
                     <label htmlFor="start_time" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Waktu mulai</label>
                     <input 
                         type="time" 
@@ -150,7 +171,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
                         required />
                 </div>
-                <div class="col-span-2 sm:col-span-1">
+                <div className="col-span-2 sm:col-span-1">
                     <label htmlFor="end_time" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Waktu selesai</label>
                     <input 
                         type="time" 
@@ -165,7 +186,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
             </div>
 
             <div className='grid grid-cols-2 gap-6 py-2'>
-                <div class="col-span-2 sm:col-span-1">
+                <div className="col-span-2 sm:col-span-1">
                     <button 
                     type="button"
                     aria-label="Close"
@@ -174,7 +195,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
                         Batal
                     </button>
                 </div>
-                <div class="col-span-2 sm:col-span-1">
+                <div className="col-span-2 sm:col-span-1">
                     <button 
                     type="submit"
                     className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

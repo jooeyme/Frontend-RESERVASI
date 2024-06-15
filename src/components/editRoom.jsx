@@ -104,10 +104,10 @@ const EditFormRoom = () => {
     return (
       <>
       <div>
-        <div className="bg-blue-100 py-4 mt-10">
+        <div className="py-4 mt-10">
             <h1 className="text-2xl text-center font-bold">Edit Ruangan</h1>
         </div>
-          <form onSubmit={handleFormSubmit} className='border border-gray-300 rounded mx-auto max-w-6xl w-full my-5 inputs space-y-6' >
+          <form onSubmit={handleFormSubmit} className='border border-gray-300 rounded mx-auto max-w-6xl w-full my-4 inputs space-y-6' >
             <div className="flex flex-col md:flex-row gap-y-0 gap-x-4">
               <div className='w-full md:w-1/2 p-4 pl-10'>
             <div className="mb-4">

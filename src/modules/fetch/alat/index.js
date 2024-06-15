@@ -11,6 +11,15 @@ async function createAlat(formData) {
     }
   }
 
+async function deleteTool(id) {
+    try {
+      const response = await instance.delete(`/tool/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
 async function findAllTool() {
   try {
     const response = await instance.get("/tool", {
@@ -42,4 +51,4 @@ async function editTool(id, formData) {
   }
 }
 
-export { createAlat, showToolById, findAllTool, editTool };
+export { createAlat, showToolById, findAllTool, editTool, deleteTool };

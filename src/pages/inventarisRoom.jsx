@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { findAllRoom } from '../modules/fetch/rooms';
+import { findAllRoom, deleteRoom } from '../modules/fetch/rooms';
 import RoomEditCard from '../components/card/EditRoomCard';
-import DetailRoom from './detailRoom';
-import Sidebar from '../components/sidebar';
+import MainLayoutAdmin from './MainLayoutAdmin';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 const RoomsforEdit= () => {
     const navigate = useNavigate();
   const [room, setRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,34 +26,49 @@ const RoomsforEdit= () => {
     fetchData();
   }, []);
 
-  const showRoomDetails = (room) => {
-    setSelectedRoom(room);
+  const handleDeleteRoom = async (id) => {
+    Swal.fire({
+      title: 'Konfirmasi Penghapusan',
+      text: 'Apakah Anda yakin ingin menghapus data Ruangan ini?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal'
+  }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+            await deleteRoom(id);
+            setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
+            toast('Data Ruangan berhasil dihapus.', { type: 'success' });
+        } catch (error) {
+            console.error("Error deleting job:", error.message);
+            toast('Gagal menghapus Ruangan. Silahkan coba lagi.', { type: 'error' });
+        } 
+      }
+    })
 };
 
-const hideRoomDetails = () => {
-    setSelectedRoom(null);
-};
 
   return (
     <>
-    <Sidebar/>
-    <div className="p-4 sm:ml-64">
+    <MainLayoutAdmin>
+    <div>
     <div className="container mx-auto flex flex-col">
-        <div className="bg-blue-100 py-4 mb-5">
+        <div className="py-4">
             <h1 className="text-2xl text-center font-bold">Ruangan Terdaftar</h1>
         </div>
-        <div className="flex justify-center">
+        <div className="flex items-center justify-center mb-2">
                 <button 
                     type="button" 
                     onClick={() => navigate("/tambah-room")}
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 my-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mb-2 my-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     >Tambah Ruangan</button>
-            </div>
+          </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
      
         {room.map((room) => (
           (room.room_id && room.room_id !== null) ? (
-            <RoomEditCard key={room.id} {...room} showDetails={showRoomDetails}/>
+            <RoomEditCard key={room.id} {...room} onDelete={handleDeleteRoom} />
           ) : (
             // Handle cases where room_id is null or missing
             <div key={room.id}>
@@ -60,14 +76,12 @@ const hideRoomDetails = () => {
             </div>
         )))}
       </div>
-      {selectedRoom && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-                    <DetailRoom room={selectedRoom} hideDetails={hideRoomDetails} />
-                </div>
-            )}
+      
       
     </div>
     </div>
+    </MainLayoutAdmin>
+    <ToastContainer />
     </>
   );
 };

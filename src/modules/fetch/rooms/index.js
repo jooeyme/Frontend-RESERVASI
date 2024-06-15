@@ -11,6 +11,15 @@ async function createRoom(formData) {
     }
   }
 
+async function deleteRoom(id) {
+  try {
+    const response = await instance.delete(`/room/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Something went wrong");
+  }
+}
+
 async function findAllRoom() {
   try {
     const response = await instance.get('/room', {
@@ -42,4 +51,4 @@ async function editRoom(id, formData) {
   }
 }
 
-export { createRoom, findAllRoom, showRoomById, editRoom};
+export { createRoom, findAllRoom, showRoomById, editRoom, deleteRoom};

@@ -1,13 +1,12 @@
 import FormAlat from "../components/form/formAlat";
-import Sidebar from "../components/sidebar";
+import MainLayoutAdmin from "./MainLayoutAdmin"; 
 
 const FormAddAlat = () => {
     return (
         <>
-            <Sidebar/>
-            <div className="p-4 sm:ml-64">
+            <MainLayoutAdmin>
                 <FormAlat />
-            </div>
+            </MainLayoutAdmin>
         </>
     )
 };

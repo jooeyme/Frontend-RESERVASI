@@ -59,6 +59,8 @@ export default function PrivateRoute({
       return <h1>Unauthorized: Insufficient Privileges</h1>; // Display message for unauthorized roles
     }
 
+
+
     return children;
 }
  

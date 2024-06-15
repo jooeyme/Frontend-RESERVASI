@@ -6,8 +6,9 @@ import './App.css'
 import FormAddRoom from './pages/addroom'
 import FormAddAlat from './pages/addAlat'
 import DaftarPeminjam from './pages/daftarPeminjam'
+import DaftarPeminjamTool from './pages/daftarPeminjamTool';
 import HomeUser from './pages/homeUser'
-import FormRoomReservasi from './pages/roomReservasi'
+
 import RoomsPage from './pages/allRoom'
 import DetailRoom from './pages/detailRoom'
 import DetailTool from './pages/detailTool'
@@ -24,7 +25,8 @@ import UserLoginPage from './pages/UserLogin'
 import AdminLoginPage from './pages/AdminLogin'
 import UserListPage from './pages/ListUserPage';
 import RegisterPage from './pages/Register';
-import Navbar from './components/navbar';
+import ListFile from './pages/fileList';
+import ListFileUser from './pages/fileListUser';
 
 function App() {
 
@@ -33,33 +35,42 @@ function App() {
       <Router>
       
         <Routes> 
-        <Route 
-          path={'/navbar'}
-          element={<Navbar />}
-        />
+          <Route 
+            path={"/file"}
+            element={<ListFile />}
+          />
 
-        <Route 
-              path={"/register"}
-              element={<RegisterPage/>}
-            />
+          <Route 
+            path={"/fileUser"}
+            element={<ListFileUser />}
+          />
 
-        <Route 
-              path={"/list-user"}
-              element={<UserListPage/>}
-            />
+          <Route 
+            path={"/register"}
+            element={<RegisterPage/>}
+          />
 
-            <Route 
-              path={"/login"}
-              element={<UserLoginPage/>}
-            />
+          <Route 
+            path={"/list-user"}
+            element={
+            <PrivateRoute allowedRoles={["super_admin"]}>
+              <UserListPage/>
+            </PrivateRoute>
+          }
+          />
 
-            <Route 
-              path={"/admin"}
-              element={<AdminLoginPage/>}
-            />
-            
+          <Route 
+            path={"/login"}
+            element={<UserLoginPage/>}
+          />
 
-        <Route 
+          <Route 
+            path={"/admin"}
+            element={<AdminLoginPage/>}
+          />
+              
+
+          <Route 
             path={"/pegawai/:id"}
             element={<DetailPegawai/>}
           /> 
@@ -95,59 +106,95 @@ function App() {
           />
 
           <Route 
-            path={"/inventaris-room"}
-            element={<RoomsforEdit />}
-          />
-
-          <Route 
-            path={"/inventaris-alat"}
-            element={<ToolsforEdit />}
-          />
-
-          <Route 
-            path={"/editroom/:id"}
-            element={<RoomEdit />}
-          />
-
-          <Route 
-            path={"/edittool/:id"}
-            element={<ToolEdit />}
-          />
-
-          <Route 
             path={"/home-user"}
-            element={<HomeUser/>}
+            element={
+            
+              <HomeUser/>
+            
+          }
           />
 
           <Route 
             path={"/home-admin"}
-            element={<HomeAdmin/>}
+            element={
+            <PrivateRoute allowedRoles={["admin", "super_admin", "admin_staff"]}>
+              <HomeAdmin/>
+            </PrivateRoute>
+          }
           />
 
+          {/* Halaman ADMIN ROOM */}
+          <Route 
+            path={"/inventaris-room"}
+            element={
+            <PrivateRoute allowedRoles={["admin", "super_admin"]}>
+              <RoomsforEdit />
+            </PrivateRoute>
+            }
+          />
+          <Route 
+            path={"/editroom/:id"}
+            element={
+            <PrivateRoute allowedRoles={["admin", "super_admin"]}>
+              <RoomEdit />
+            </PrivateRoute>
+          }
+          />
+          {/* Halaman peminjam Room */}
           <Route
             path={"/daftar-peminjam"}
             element={
-            <PrivateRoute allowedRoles={["admin", "user"]}>
-            <DaftarPeminjam/>
-            
+            <PrivateRoute allowedRoles={["admin", "super_admin"]}>
+              <DaftarPeminjam/>
             </PrivateRoute>}
           />
-          
-
+          {/* Halaman Add Room */}
           <Route
             path={"/tambah-room"}
-            element={<FormAddRoom/>}
+            element={
+              <PrivateRoute allowedRoles={["admin", "super_admin"]}>
+                <FormAddRoom/>
+              </PrivateRoute>
+            }
             />
 
+            
+          {/* Halaman ADMIN TOOL */}
+          <Route 
+            path={"/inventaris-alat"}
+            element={
+            <PrivateRoute allowedRoles={["super_admin", "admin_staff"]}>
+              <ToolsforEdit />
+            </PrivateRoute>
+            }
+          />
+          <Route 
+            path={"/edittool/:id"}
+            element={
+            <PrivateRoute allowedRoles={["super_admin", "admin_staff"]}>
+              <ToolEdit />
+            </PrivateRoute>
+          }
+          />
+          <Route 
+            path={"/daftar-peminjam-tool"}
+            element={
+              <PrivateRoute allowedRoles={["super_admin", "admin_staff"]}>
+                <DaftarPeminjamTool /> 
+              </PrivateRoute>
+              }
+          />
+          {/* Halaman Add Tool */}
           <Route
             path={"/tambah-alat"}
-            element={<FormAddAlat/>}
+            element={
+              <PrivateRoute allowedRoles={["super_admin", "admin_staff"]}>
+                <FormAddAlat/>
+              </PrivateRoute>
+            }
             />
 
-          <Route 
-            path={"/room-reservasi"}
-            element={<FormRoomReservasi />}
-          />
+          
 
 
 

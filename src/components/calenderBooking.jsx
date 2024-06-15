@@ -1,5 +1,4 @@
-import { Menu, Transition } from '@headlessui/react'
-import { DotsVerticalIcon } from '@heroicons/react/outline'
+
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid'
 import {
   add,
@@ -17,8 +16,8 @@ import {
   startOfToday,
   startOfWeek,
 } from 'date-fns'
-import { Fragment, useState, useEffect } from 'react'
-import { findAllBooking, getBookingByRoomId } from '../modules/fetch/reservasi'
+import { useState } from 'react'
+import { FaHourglassHalf, FaCheckCircle, FaTimesCircle,  } from 'react-icons/fa';
 
 
 function classNames(...classes) {
@@ -46,19 +45,21 @@ export default function CalenderBooking({bookings}) {
     let firstDayNextMonth = add(firstDayCurrentMonth, { months: 1 })
     setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
   }
-  if (!bookings || bookings.length === 0) {
-    return <div>Loading bookings...</div>; // Or display an empty message
-  }
-  let selectedDayMeetings = bookings.filter((booking) => {
-    if (!booking.booking_date) {
+  let selectedDayMeetings = [];
+  if (bookings && bookings.length > 0) {
+    selectedDayMeetings = bookings.filter((booking) => {
+      if (!booking.booking_date) {
+        return false;
+      } else if (booking.booking_status === 'rejected') {
         return false;
       }
       return isSameDay(parseISO(booking.booking_date), selectedDay);
     });
+  }
 
   return (
-    <div className="pt-16">
-      <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6">
+    <div>
+      <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-6xl md:px-6">
         <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
           <div className="md:pr-14">
             <div className="flex items-center">
@@ -91,7 +92,7 @@ export default function CalenderBooking({bookings}) {
               <div>F</div>
               <div>S</div>
             </div>
-            <div className="grid grid-cols-7 mt-2 text-sm">
+            <div className="grid grid-cols-7 mt-2 text-md">
               {days.map((day, dayIdx) => (
                 <div
                   key={day.toString()}
@@ -132,7 +133,8 @@ export default function CalenderBooking({bookings}) {
                   </button>
 
                   <div className="w-1 h-1 mx-auto mt-1">
-                    {bookings.some((booking) =>
+                    {bookings && bookings.filter((booking) => 
+                      booking.booking_status !== 'rejected').some((booking) =>
                       isSameDay(parseISO(booking.booking_date), day)
                     ) && (
                       <div className="w-1 h-1 rounded-full bg-sky-500"></div>
@@ -172,11 +174,14 @@ function Meeting({ booking }) {
 
   return (
     <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-gray-100 hover:bg-gray-100">
-      <img
-        src={booking.imageUrl}
-        alt=""
-        className="flex-none w-10 h-10 rounded-full"
-      />
+      <span
+        className="flex w-10 h-10 rounded-full items-center justify-center"
+      > 
+        {booking.booking_status === 'approved' && <FaCheckCircle style={{color: "green"}} size={30} />}
+        {booking.booking_status === 'rejected' && <FaTimesCircle style={{color: "red"}} size={30}/>}            
+        {booking.booking_status === 'pending' && <FaHourglassHalf style={{color: "gray"}} size={30}/>} 
+                
+      </span>
       <div className="flex-auto">
         <p className="text-gray-900">{booking.peminjam}</p>
         <p className="mt-0.5">

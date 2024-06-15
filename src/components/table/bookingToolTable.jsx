@@ -1,138 +1,510 @@
-import React, {useEffect, useState} from "react";
-import { findAllBooking} from "../../modules/fetch/reservasi/index";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import React, {useEffect, useState, useRef} from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Tabs } from "flowbite-react";
+import { findAllBooking, editBooking, showBookingById } from "../../modules/fetch/reservasi/index";
+import ReservationCard from "../card/reservasiCard";
+import { format, parse } from 'date-fns';
+import Select from 'react-select';
+import { FaHourglassHalf, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import Pagination from "../pagination";
 
-const BookingToolList = () => {
-    // const { id } = useParams();
-    const navigate = useNavigate();
-    const [booking, setBooking] = useState([])
-    useEffect(() => {
-        try {
-            const fetchBooking = async () => {
-                const response = await findAllBooking();
-                console.log(response.data);
-                const bookingData = (response.data);
-                
+const statusOptions = [
+    {
+        value: 'pending',
+        label: (
+            <div className="flex items-center">
+                <FaHourglassHalf className="mr-2" />
+                Pending
+            </div>
+        ),
+    },
+    {
+        value: 'approved',
+        label: (
+            <div className="flex items-center">
+                <FaCheckCircle className="mr-2" style={{color: "green"}}/>
+                Approved
+            </div>
+        ),
+    },
+    {
+        value: 'rejected',
+        label: (
+            <div className="flex items-center">
+                <FaTimesCircle className="mr-2" style={{color: "red"}}/>
+                Rejected
+            </div>
+        ),
+    },
+];
 
-                setBooking(bookingData);
-            }
-            fetchBooking()
-        } catch (e) {
-            console.log("Error fetching Booking", e)
-        }
-    }, [])
-
-    
-
-    const formatUpdatedAt = (updatedAt) => {
-//        const date = new Date(updatedAt);
-      
-        // Mendapatkan tanggal dalam format YYYY-MM-DD
-//        const formattedDate = date.toISOString().split('T')[0];
-        
-//        return formattedDate;
-        
+const CustomSelect = ({ booking, handleChangeStatus }) => {
+    const handleChange = (selectedOption) => {
+        handleChangeStatus(booking.id, selectedOption.value);
     };
 
-
-    
-
-
+    const selectedOption = statusOptions.find(option => option.value === booking.booking_status);
 
     return (
+        <Select
+            value={selectedOption}
+            onChange={handleChange}
+            options={statusOptions}
+            className="w-full"
+            classNamePrefix="react-select"
+        />
+    );
+};
 
+const BookingToolList = () => {
+    const navigate = useNavigate();
+    const [Tool_Id, setTool_id] = useState("");
+    const [booking, setBooking] = useState([])
+    const [selectedBookingId, setSelectedBookingId] = useState(null);
+    const [isOpen, setIsOpen] = useState(false); // State for card visibility
+    const itemsPerPage = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+    const tabsRef = useRef(null);
+    const [activeTab, setActiveTab] = useState(0);
+
+    const handleCloseClick = () => {
+        setIsOpen(false); // Update state to hide the card
+    };
+
+    const handleBookingClick = async (Booking) => {
+        try {
+            const Id = Booking;
+            setTool_id(Id);
+            setIsOpen(true);
+            console.log(`Booking`, Tool_Id);
+            const book = await showBookingById(Id);
+            console.log(`Bookinghh`, book);
+            
+            setSelectedBookingId(book);
+            console.log("selectedBooking:", selectedBookingId);
+        } catch (error) {
+            console.log("error:", error);
+        }
+      
+  };
+
+    useEffect(() => {
+        const filteredRoomBookings = [];
+        const filteredToolBookings = [];
+            try {
+                const fetchBooking = async () => {
+                const response = await findAllBooking();
+                const bookingData = (response.data);
+                //const RoomId = (response.data.room_id);
+                console.log("data1:",bookingData);
+                bookingData.forEach(booking => {
+                    if (booking.tool_id === null) {
+                        filteredRoomBookings.push(booking);
+                    } else {
+                        filteredToolBookings.push(booking);
+                    }
+                })
+                setBooking(filteredToolBookings);
+            }
+                //setRoom_id(RoomId); 
+                fetchBooking();   
+            } catch (e) {
+                console.log("Error fetching Booking", e)
+            }
+    }, []);
+
+
+    const handleChangeStatus = async (id, newStatus) => {
+        try {
+            const formData = { booking_status: newStatus };
+            const response = await editBooking(id, formData);
+            console.log(response);
+
+            if (response.status === 200) {
+                // Update daftar reservasi di state
+                setBooking(prevBookings => {
+                    const updatedBookings = prevBookings.map(booking =>
+                        booking.id === id ? { ...booking, booking_status: newStatus } : booking
+                    )
+                    console.log('Updated Bookings:', updatedBookings);
+                    return updatedBookings;
+                });
+              } else {
+                // Tampilkan pesan error jika update status gagal
+                console.error('Gagal memperbarui status reservasi:', response);
+              }
+        } catch (error) {
+            console.error('Terjadi kesalahan saat memperbarui status reservasi:', error);
+        }
+    };
+
+    const formatDateString = (dateString) => {
+        if (!dateString) return 'Invalid date';
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM yyyy');
+    };
+    
+    const formatTime = (timeString) => {
+        const date = parse(timeString, 'HH:mm:ss', new Date());
+        return format(date, 'hh:mm a');
+    };
+    
+    const filteredData = () => {
+        let filteredBookings;
+    if (activeTab === 1) {
+        filteredBookings = booking.filter(booking => booking.booking_status === 'approved');
+    } else if (activeTab === 2) {
+        filteredBookings = booking.filter(booking => booking.booking_status === 'rejected');
+    } else {
+        filteredBookings = booking.filter(booking => booking.booking_status === 'pending');   
+    }
+    return filteredBookings;
+    }
+    
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData().slice(indexOfFirstItem, indexOfLastItem);
+    console.log("booktool:", booking)
+    const paginate = (pageNumber) => {
+        if (pageNumber < 1 || pageNumber > Math.ceil(filteredData().length / itemsPerPage)) return;
+        setCurrentPage(pageNumber);
+      };
+
+    return (
         <div>
-            <div className="bg-blue-100 py-4 mt-10">
+            <div className="py-4 mt-10">
                 <h1 className="text-2xl text-center font-bold">Booking Tool List</h1>
             </div>
-
-
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-5">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
-                        <tr>
-                            <th scope="col" className="px-6 py-3"></th>
-                            <th scope="col" className="px-6 py-3">
-                                Nama Peminjam
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Reservasi
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Waktu mulai
-                            </th>
-                            {/* <th scope="col" className="px-6 py-3">
-                                Requirement
-                            </th> */}
-                            {/* <th scope="col" className="px-6 py-3">
-                                Description
-                            </th> */}
-                            {/* <th scope="col" className="px-6 py-3">
-                                Required Skill
-                            </th> */}
-                            {/* <th scope="col" className="px-6 py-3">
-                                Salary
-                            </th> */}
-                            <th scope="col" className="px-6 py-3">
-                                Waktu Selesai
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Status
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {booking.map((booking, index) => (
-                        <tr 
-                            key={index} 
-                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        >
-                        <td className="px-6 py-4">
-                            {index + 1}
-                        </td>
-                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {booking.peminjam}
-                        </td>
-                        <td className="px-6 py-4">
-                            {booking.tool_id}
-                        </td>
-                        <td className="px-6 py-4">
-                            {booking.start_time}
-                        </td>
-                        {/* <td className="px-6 py-4">
-                            {jobs.requirement}
-                        </td> */}
-                        {/* <td className="px-6 py-4">
-                            {jobs.description}
-                        </td> */}
-                        {/* <td className="px-6 py-4">
-                            {jobs.required_skill}
-                        </td> */}
-                        {/* <td className="px-6 py-4">
-                            {jobs.salary}
-                        </td> */}
-                        <td className="px-6 py-4">
-                            {booking.end_time}
-                        </td>
-                        <td className="px-6 py-4 flex">
-                            <Link 
-                                to={`/editjob/${booking.id}`} 
-                                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            <Tabs aria-label="Default tabs" ref={tabsRef} onActiveTabChange={(tab) => {setActiveTab(tab); setCurrentPage(1)}} style="default">
+                <Tabs.Item 
+                active
+                title="Pending" 
+                icon={FaHourglassHalf}                 
+                >
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+                    <div className="flex justify-center mb-4">
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3"></th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Nama Peminjam
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Reservasi
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Waktu 
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Detail
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            {currentItems.length > 0 ? (
+                            <tbody>
+                            {currentItems.map((booking, index) => (
+                            <tr 
+                                key={booking.id} 
+                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M17 15.9999V18.8329C17.0001 18.9862 16.97 19.138 16.9114 19.2797C16.8528 19.4213 16.7669 19.55 16.6585 19.6584C16.5501 19.7668 16.4214 19.8528 16.2797 19.9114C16.1381 19.97 15.9863 20.0001 15.833 19.9999H4.167C4.01371 20.0001 3.8619 19.97 3.72025 19.9114C3.57861 19.8528 3.44991 19.7668 3.34151 19.6584C3.23312 19.55 3.14717 19.4213 3.08857 19.2797C3.02996 19.138 2.99987 18.9862 3 18.8329V7.16695C2.99987 7.01366 3.02996 6.86184 3.08857 6.7202C3.14717 6.57855 3.23312 6.44985 3.34151 6.34146C3.44991 6.23307 3.57861 6.14711 3.72025 6.08851C3.8619 6.02991 4.01371 5.99981 4.167 5.99995H10.783M16.304 5.84395L19.156 8.69595M20.409 4.59095C20.5963 4.77817 20.745 5.00047 20.8464 5.24515C20.9478 5.48983 20.9999 5.75209 20.9999 6.01695C20.9999 6.2818 20.9478 6.54406 20.8464 6.78874C20.745 7.03342 20.5963 7.25573 20.409 7.44295L12.565 15.2869L9 15.9999L9.713 12.4349L17.557 4.59095C17.7442 4.4036 17.9665 4.25498 18.2112 4.15359C18.4559 4.05219 18.7181 4 18.983 4C19.2479 4 19.5101 4.05219 19.7548 4.15359C19.9995 4.25498 20.2218 4.4036 20.409 4.59095Z" stroke="blue" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                            </Link>
-                                
-                        </td>
-                    </tr>
-                    ))}
-                        
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                                <td className="px-4 py-4">
+                                    {index + 1}
+                                </td>
+                                <td scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {booking.peminjam}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {booking.tool_id}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {formatDateString(booking.booking_date)}
+                                </td>
+                                <td className="flex px-4 py-4">
+                                    {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                                </td>
+                                <td className="px-4 py-4">
+                                <button
+                                    type="button"
+                                    className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                                    onClick={() => handleBookingClick(booking.id)}
+                                    >
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                                            stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </span>
+                                    <span className="hidden md:inline-block">View</span>
+                                </button>
+                                </td>
+                                <td className="px-4 py-4 flex items-start justify-start">
+                                {booking.booking_status === 'pending' ? (
+                                        <CustomSelect
+                                            booking={booking}
+                                            handleChangeStatus={handleChangeStatus}
+                                        />
+                                    ) : (
+                                        <span className="flex items-start justify-start">
+                                            {booking.booking_status === 'approved' && <FaCheckCircle className="mr-2" style={{color: "green"}} size={20} />}
+                                            {booking.booking_status === 'rejected' && <FaTimesCircle className="mr-2" style={{color: "red"}} size={20}/>}
+                                            
+                                            {booking.booking_status }    
+                                        </span>
+                                    )}    
+                                </td>
+                            </tr>
+                            ))}
 
+                            </tbody>
+                            ) : (
+                                <tbody>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                        <td colSpan="7" className="text-center py-4 text-lg">No data available.</td>
+                                    </tr>
+                                </tbody>
+                                )}
+                        </table>
+                    </div>
+                    <Pagination
+                            itemsPerPage={itemsPerPage}
+                            totalItems={filteredData().length}
+                            paginate={paginate}
+                            currentPage={currentPage}
+                />
+                </div>
+                </Tabs.Item>
+                <Tabs.Item 
+                active
+                title="Approve" 
+                icon={FaCheckCircle} 
+                >
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+                    <div className="flex justify-center mb-4">
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3"></th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Nama Peminjam
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Reservasi
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Waktu 
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Detail
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            {currentItems.length > 0 ? (
+                            <tbody>
+                            {currentItems.map((booking, index) => (
+                            <tr 
+                                key={booking.id} 
+                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                            >
+                                <td className="px-4 py-4">
+                                    {index + 1}
+                                </td>
+                                <td scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {booking.peminjam}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {booking.tool_id}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {formatDateString(booking.booking_date)}
+                                </td>
+                                <td className="flex px-4 py-4">
+                                    {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                                </td>
+                                <td className="px-4 py-4">
+                                <button
+                                    type="button"
+                                    className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                                    onClick={() => handleBookingClick(booking.id)}
+                                    >
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                                            stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </span>
+                                    <span className="hidden md:inline-block">View</span>
+                                </button>
+                                </td>
+                                <td className="px-4 py-4 flex items-start justify-start">
+                                {booking.booking_status === 'pending' ? (
+                                        <CustomSelect
+                                            booking={booking}
+                                            handleChangeStatus={handleChangeStatus}
+                                        />
+                                    ) : (
+                                        <span className="flex items-start justify-start">
+                                            {booking.booking_status === 'approved' && <FaCheckCircle className="mr-2" style={{color: "green"}} size={20} />}
+                                            {booking.booking_status === 'rejected' && <FaTimesCircle className="mr-2" style={{color: "red"}} size={20}/>}
+                                            
+                                            {booking.booking_status }    
+                                        </span>
+                                    )}    
+                                </td>
+                            </tr>
+                            ))}
+                            
+                            </tbody>
+                            ) : (
+                                <tbody>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                        <td colSpan="7" className="text-center py-4 text-lg">No data available.</td>
+                                    </tr>
+                                </tbody>
+                                )}
+                        </table>
+                    </div>
+                    <Pagination
+                            itemsPerPage={itemsPerPage}
+                            totalItems={filteredData().length}
+                            paginate={paginate}
+                            currentPage={currentPage}
+                />
+                </div>
+                </Tabs.Item>
+                <Tabs.Item 
+                active
+                title="Rejected" 
+                icon={FaTimesCircle} 
+                >
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+                    <div className="flex justify-center mb-4">
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3"></th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Nama Peminjam
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Reservasi
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Waktu 
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Detail
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            {currentItems.length > 0 ? (
+                            <tbody>
+                            {currentItems.map((booking, index) => (
+                            <tr 
+                                key={booking.id} 
+                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                            >
+                                <td className="px-4 py-4">
+                                    {index + 1}
+                                </td>
+                                <td scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {booking.peminjam}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {booking.tool_id}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {formatDateString(booking.booking_date)}
+                                </td>
+                                <td className="flex px-4 py-4">
+                                    {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                                </td>
+                                <td className="px-4 py-4">
+                                <button
+                                    type="button"
+                                    className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                                    onClick={() => handleBookingClick(booking.id)}
+                                    >
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                                            stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </span>
+                                    <span className="hidden md:inline-block">View</span>
+                                </button>
+                                </td>
+                                <td className="px-4 py-4 flex items-start justify-start">
+                                {booking.booking_status === 'pending' ? (
+                                        <CustomSelect
+                                            booking={booking}
+                                            handleChangeStatus={handleChangeStatus}
+                                        />
+                                    ) : (
+                                        <span className="flex items-start justify-start">
+                                            {booking.booking_status === 'approved' && <FaCheckCircle className="mr-2" style={{color: "green"}} size={20} />}
+                                            {booking.booking_status === 'rejected' && <FaTimesCircle className="mr-2" style={{color: "red"}} size={20}/>}
+                                            
+                                            {booking.booking_status }    
+                                        </span>
+                                    )}    
+                                </td>
+                            </tr>    
+                            ))}
+                                
+                            </tbody>
+                            ) : (
+                                <tbody>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                        <td colSpan="7" className="text-center py-4 text-lg">No data available.</td>
+                                    </tr>
+                                </tbody>
+                                )}
+                        </table>
+                    </div>
+                    <Pagination
+                            itemsPerPage={itemsPerPage}
+                            totalItems={filteredData().length}
+                            paginate={paginate}
+                            currentPage={currentPage}
+                />
+                </div>
+                </Tabs.Item>
+            </Tabs>
+
+            {selectedBookingId && isOpen && 
+                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 pt-20 overflow-auto">
+                    <ReservationCard 
+                        bookingData={selectedBookingId}
+                        isOpen={isOpen} // Pass the isOpen state
+                        handleCloseClick={handleCloseClick} />
+                </div>
+            }
+        </div>
     )
 }
 

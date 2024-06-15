@@ -1,13 +1,13 @@
-import Sidebar from "../components/sidebar";
+import MainLayoutAdmin from "./MainLayoutAdmin";
 import PegawaiList from "../components/table/daftarPegawai";
 
 const DaftarPegawai = () => {
     return (
     <>
-        <Sidebar />
-        <div className="p-4 sm:ml-64">
+
+        <MainLayoutAdmin>
             <PegawaiList />
-        </div>
+        </MainLayoutAdmin>
     </>
     )
 }
