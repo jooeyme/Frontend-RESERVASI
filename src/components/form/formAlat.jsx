@@ -190,14 +190,14 @@ const FormAlat = () => {
 
                 <div className='w-full md:w-1/2 p-4 pr-10'>
                     <div className="mb-4">
-                        <label htmlFor="deskripsi_tool" className="block text-left text-sm font-semibold font-poppins">
+                        <label htmlFor="deskripsi" className="block text-left text-sm font-semibold font-poppins">
                             Deskripsi Alat
                         </label>
                         <textarea
                             placeholder='Tool Functionality'
                             type="text"
-                            id="deskripsi_tool"
-                            name="deskripsi_tool"
+                            id="deskripsi"
+                            name="deskripsi"
                             onChange={handleInputChange}
                             value={formData.deskripsi_tool}
                             className="mt-1 p-2 border border-gray-300 rounded-md w-full min-h-5"

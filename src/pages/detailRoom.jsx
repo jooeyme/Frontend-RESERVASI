@@ -102,7 +102,7 @@ const DetailRoom = () => {
             </Link>
             <h1 className="flex items-start font-semibold text-gray-900 text-2xl dark:text-gray-300 my-4">Ruangan {detail.room_id}</h1>
         </div>
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 mx-auto max-w-6xl">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 mx-auto max-w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
             <div className="flex flex-col md:flex-row -mx-4">
                 <div className="md:flex-1 px-4">
@@ -170,7 +170,7 @@ const DetailRoom = () => {
     <div className="flex items-start justify-start">
         <h1 className="flex items-start font-semibold text-gray-900 text-2xl dark:text-white my-4 ml-8" >Jadwal Kegiatan</h1>
     </div>
-    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto py-4 max-w-6xl ">
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto py-4 max-w-full ">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
             <CalenderBooking bookings={booking}/>
         </div>

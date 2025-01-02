@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { FaFolderOpen, FaChevronDown, FaChevronRight } from "react-icons/fa";
 
 const SidebarUser = ({ is_Open, toggleSidebar}) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +8,7 @@ const SidebarUser = ({ is_Open, toggleSidebar}) => {
     setIsOpen(!isOpen);
   };
   return (
-      <>
+      <>   
         <aside 
           id="sidebar" 
           className={`fixed top-10 left-0 z-40 w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 ${is_Open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`} 
@@ -41,9 +41,19 @@ const SidebarUser = ({ is_Open, toggleSidebar}) => {
                             <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
                           </svg>
                           <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Reservasi</span>
-                          <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                          </svg>
+                          {!isOpen ? (
+                            <FaChevronRight
+                            className="text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            size={16} />
+                          ) : (
+                            <FaChevronDown 
+                            className="text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            size={16}/>
+                          )}
                     </button>
                     <ul id="dropdown-example" className={`${isOpen ? "block" : "hidden"} py-2 scape-y-2`}>
                           <li>
@@ -60,6 +70,17 @@ const SidebarUser = ({ is_Open, toggleSidebar}) => {
                           </li>
                     </ul>
                 </li>
+                {/* <li>
+                    <a href="/doc" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <FaFolderOpen
+                      className="text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      aria-hidden="true"
+                      fill="currentColor"
+                      size={20} // Maintain the size prop for proper scaling
+                    />
+                      <span className="ms-3">Dokumen</span>
+                    </a>
+                </li> */}
               </ul>
           </div>
         </aside>

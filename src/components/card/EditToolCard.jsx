@@ -3,7 +3,7 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import { FaRegTrashAlt, FaRegEdit } from "react-icons/fa";
 
-const ToolEditCard = ({ id, tool_id,name_tool, deskripsi, gambar_tool, onDelete}) => {
+const ToolEditCard = ({ id, tool_id,name_tool, deskripsi, jumlah, gambar_tool, onDelete}) => {
     const handleDeleteClick = () => {
         onDelete(id);
     };
@@ -37,7 +37,7 @@ const ToolEditCard = ({ id, tool_id,name_tool, deskripsi, gambar_tool, onDelete}
                     <h5 className="flex text-left text-lg font-bold tracking-tight text-gray-900 dark:text-white">{name_tool}</h5>
              
                 <p className="flex text-left mb-3 font-normal text-gray-700 dark:text-gray-400">{deskripsi}</p>
-                
+                <p className="flex items-start text-lg font-medium text-gray-700 dark:text-gray-400">Tersedia: {jumlah}</p>
             </div>
         </div>
     );

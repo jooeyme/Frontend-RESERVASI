@@ -9,6 +9,15 @@ async function getAdmin () {
     }
 }
 
+async function getAdminById(id) {
+    try {
+        const response = await instance.get(`/admin/personal/${id}`);	
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
 async function updateAdmin (id, formData) {
     try {
         const response = await instance.patch(`/admin/edit/${id}`, formData)
@@ -35,4 +44,4 @@ async function deleteAdmin (id) {
     }
 }
 
-export { getAdmin, updateAdmin, addAdmin, deleteAdmin }
+export { getAdmin, updateAdmin, addAdmin, deleteAdmin, getAdminById }

@@ -9,6 +9,15 @@ async function getUser() {
     }
 }
 
+async function getUserById(id) {
+    try {
+        const response = await instance.get(`user/personal/${id}`)
+        return response.data
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
 async function updateUser(id, formData) {
     try {
         const response = await instance.patch(`/user/edit/${id}`, formData)
@@ -27,4 +36,4 @@ async function deleteUser(id) {
     }
 }
 
-export { getUser, updateUser, deleteUser }
+export { getUser, getUserById, updateUser, deleteUser }

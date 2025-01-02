@@ -92,18 +92,18 @@ const DetailTool = () => {
         <MainLayoutUser>
         <div className="flex justify-start">
             <Link to={"/allTool"}
-            className="flex items-center justify-center">
+            className="flex items-center justify-center py-4">
                 <button
                     type="button"
                     className="-my-1.5 flex items-center justify-center text-gray-400 hover:text-gray-500"
                 >
                     <span className="sr-only">Previous</span>
                     <ChevronLeftIcon className="w-8 h-8" aria-hidden="true" />
-                </button>
+                </button>    
             </Link>
-            <h1 className="flex items-start font-semibold text-2xl text-gray-900 dark:text-white my-4">Alat {detail.tool_id}</h1>
+            
         </div>
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 m-auto max-w-6xl">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 max-w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
             <div className="flex flex-col md:flex-row -mx-4">
                 <div className="md:flex-1 px-4">
@@ -157,9 +157,9 @@ const DetailTool = () => {
         </div>
     </div>
     <div className="flex items-start justify-start">
-        <h1 className="flex items-start font-semibold text-gray-900 text-2xl dark:text-white my-4 ml-8" >Jadwal Kegiatan</h1>
+        <h1 className="flex items-center font-semibold text-gray-900 text-2xl dark:text-white my-4 ml-8" >Jadwal Kegiatan</h1>
     </div>
-    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 m-auto max-w-6xl">
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 max-w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
             <CalenderBooking bookings={booking}/>
         </div>

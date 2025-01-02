@@ -27,4 +27,22 @@ async function getFilesByUserId(){
     }
 }
 
-export {fileUpload, getFile, getFilesByUserId}
+async function deleteFile(id){
+    try {
+        const response = await instance.delete(`/file/${id}`);
+        return response.data
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+async function SaveFile(id){
+    try {
+        const response = await instance.get(`/file/${id}`);
+        return response.data
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+export {fileUpload, getFile, getFilesByUserId, deleteFile, SaveFile}

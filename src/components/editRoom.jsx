@@ -40,7 +40,6 @@ const EditFormRoom = () => {
         };
         reader.readAsDataURL(file); // Read file as data URL
       };
-    
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();

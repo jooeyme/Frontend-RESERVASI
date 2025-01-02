@@ -2,12 +2,45 @@ import React, {useEffect, useState} from "react";
 import { findAllPegawai } from "../../modules/fetch/pegawai";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import IdentitasformCard from "../form/formIdentitas";
+import { createPegawai } from "../../modules/fetch/pegawai";
+import { FaSearch } from "react-icons/fa";
+import { Button, Modal, TextInput, Label, Select } from "flowbite-react";
+import { ToastContainer } from "react-toastify";
+
+const gender = {
+    Lakilaki : "Laki-laki",
+    perempuan : "perempuan"
+  }
 
 const PegawaiList = () => {
     // const { id } = useParams();
     const navigate = useNavigate();
+    const [originalPegawai, setOriginalPegawai] = useState([]);
     const [pegawai, setPegawai] = useState([])
+    const [searchQuery, setSearchQuery] = useState("");
+    const [formData, setFormData] = useState({
+        name: '',
+        NIP: '',
+        agama: '',
+        gender: '',
+        umur: '',
+      });
+    const [openModal, setOpenModal] = useState(false);
+      
     
+    
+    const handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+    
+        // Filter data berdasarkan teks pencarian
+        const filtered = originalPegawai.filter((item) =>
+          item.name.toLowerCase().includes(query) ||
+          item.jabatan.toLowerCase().includes(query)
+        );
+        setPegawai(filtered);
+      };
+
     useEffect(() => {
         try {
             const fetchPegawai = async () => {
@@ -15,7 +48,7 @@ const PegawaiList = () => {
                 console.log(response.data);
                 const DataPegawai = (response.data);
                 
-
+                setOriginalPegawai(DataPegawai)
                 setPegawai(DataPegawai);
             }
             fetchPegawai()
@@ -24,33 +57,189 @@ const PegawaiList = () => {
         }
     }, [])
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
     
+        // FormData untuk mengirim file dan data lainnya
+
+        try {
+          const newEmployee = await createPegawai(formData);
+    
+          setPegawai((prevEmployee) => [...prevEmployee, newEmployee.data]);
+    
+          setFormData({
+            name: '',
+            NIP: '',
+            agama: '',
+            gender: '',
+            umur: '',
+          });
+    
+          console.log("Employee Added successfully");
+          toast.success("Employee Added successfully", {
+            position: "top-center",
+            hideProgressBar: true,
+            autoClose: 3000,
+          });
+    
+          setOpenModal(false);
+        } catch (error) {
+          console.error("Error Add Employee:", error.message);
+          toast.error("Error Add Employee", {
+            position: "top-center",
+            hideProgressBar: true,
+            autoClose: 5000,
+          });
+        }
+      };
     
 
-    const formatUpdatedAt = (updatedAt) => {
-//        const date = new Date(updatedAt);
-      
-        // Mendapatkan tanggal dalam format YYYY-MM-DD
-//        const formattedDate = date.toISOString().split('T')[0];
-        
-//        return formattedDate;
-        
-    };
-
-
-    
-
+      const inputStyle = {
+        WebkitAppearance: "none", // Untuk Chrome, Safari, dan Edge
+        MozAppearance: "textfield", // Untuk Firefox
+      };
 
 
     return (
-
+        <>
         <div>
-            <div className="bg-blue-100 py-4 mt-10">
+            <div className=" py-4 mt-10">
                 <h1 className="text-2xl text-center font-bold">Pegawai List</h1>
             </div>
 
-
+        
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-5">
+            
+            
+                <div className="flex mb-4 justify-between">
+                <div className="flex max-w-sm px-4 py-2">
+                <Button onClick={() => setOpenModal(true)}
+                className="flex justify-start"
+                >Tambah Pegawai</Button>
+                </div>
+                  <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
+                    <Modal.Header>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Tambah Pegawai
+                      </h3>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <form onSubmit={handleSubmit} className="p-4 md:p-5">
+                        <div className="grid gap-4 mb-4 grid-cols-2">
+                          <div className="col-span-2">
+                            <label
+                              htmlFor="name"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                              Nama Lengkap 
+                            </label>
+                            <input
+                              type="text"
+                              name="name"
+                              id="name"
+                              value={formData.name}
+                              onChange={handleInputChange}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              placeholder="nama lengkap"
+                              required=""
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <div className="mb-2 block">
+                                        <Label htmlFor="NIP" value="NIP" />
+                                      </div>
+                            <TextInput
+                                        id="NIP"
+                                        name="NIP"
+                                        type="number"
+                                        placeholder="NIP"
+                                        value={formData.NIP}
+                                        onChange={handleInputChange}
+                                        style={inputStyle}
+                                        required
+                                        shadow
+                                    />
+                          </div>
+                          <div className="col-span-2">
+                            <div className="mb-2 block">
+                                        <Label htmlFor="agama" value="Agama" />
+                                      </div>
+                                      <TextInput
+                                        id="agama"
+                                        name="agama"
+                                        type="text"
+                                        placeholder="agama"
+                                        value={formData.agama}
+                                        onChange={handleInputChange}
+                                        required
+                                        shadow
+                                      />
+                          </div>
+                          <div className="col-span-2">
+                            <div className="mb-2 block">
+                                        <Label htmlFor="gender" value="Gender" />
+                                      </div>
+                                      <Select 
+                                        id="gender" 
+                                        name="gender"
+                                        value={formData.gender} 
+                                        onChange={handleInputChange}
+                                        required
+                                      >
+                                        {Object.entries(gender).map(([key, value]) => (
+                                        <option key={key} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
+                                      </Select>
+                          </div>
+                          <div className="col-span-2">
+                            <label
+                              htmlFor="umur"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                              umur
+                            </label>
+                            <input
+                              type="text"
+                              name="umur"
+                              id="umur"
+                              value={formData.umur}
+                              onChange={handleInputChange}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              placeholder="umur"
+                              required=""
+                            />
+                          </div>
+            
+                          
+                        </div>
+                        <button
+                          type="submit"
+                          className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                          Simpan
+                        </button>
+                      </form>
+                    </Modal.Body>
+                  </Modal>
+                                <TextInput
+                                    type="text"
+                                    placeholder="Cari pegawai"
+                                    className="flex justify-end max-w-sm px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                    icon={FaSearch}
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                />
+                            </div>
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
                         <tr>
@@ -123,8 +312,10 @@ const PegawaiList = () => {
                     </tbody>
                 </table>
             </div>
-            
+                
         </div>
+        <ToastContainer/>
+        </>
 
     )
 }

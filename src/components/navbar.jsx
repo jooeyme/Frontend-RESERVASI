@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef } from 'react';
 import { FaUserCircle } from "react-icons/fa";
+import logo from '../assets/logo_ipb.png';
 
 const Navbar = ({ toggleSidebar }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -51,7 +52,7 @@ const Navbar = ({ toggleSidebar }) => {
               </svg>
             </button>
             <a className="flex ml-2 md:mr-24">
-              <img src="src/components/logo_ipb.png" className="h-8 mr-3" alt="Logo" />
+              <img src={logo} className="h-8 mr-3" alt="Logo" />
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                 IPB MNH Admin
               </span>

@@ -16,6 +16,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
         end_time: '',
         desk_activity: '',
         dept: '',
+        quantity: 0,
   });
 
   const [localIsOpen, setIsOpen] = useState(isOpen || true); 
@@ -34,7 +35,8 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
     
     const today = new Date();
     const selectedDate = new Date(formData.booking_date);
-    
+    console.log("today: ", today);
+    console.log("selectedDate: ", selectedDate);
 
     if (selectedDate < today) {
         console.error("Tanggal harus di masa sekarang atau masa depan");
@@ -62,6 +64,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
             end_time: '',
             desk_activity: '',
             dept: '',
+            quantity: '',
           });
         
         console.log('Booking successfully');
@@ -78,7 +81,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
         //setIsOpen(false);
     } catch (error) {
         console.error('Error Booking:', error.message);
-        toast.error('Error Booking', {
+        toast.error(`Error Booking ${error.message}`, {
             position: 'top-center',
             hideProgressBar: true,
             autoClose: 5000
@@ -142,6 +145,20 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
                     value={formData.desk_activity} 
                     onChange={handleChange}
                     placeholder="Deskripsi Kegiatan " 
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                    required />
+            </div>
+            <div>
+                <label htmlFor="quantity" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
+                    Jumlah Alat dipinjam
+                </label>
+                <input 
+                    type="number" 
+                    name="quantity" 
+                    id="quantity" 
+                    value={formData.quantity} 
+                    onChange={handleChange}
+                    placeholder="Jumlah Alat" 
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
                     required />
             </div>

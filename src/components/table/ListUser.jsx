@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from "react";
-import { Tabs } from "flowbite-react";
+import { Tabs, Label, TextInput, Modal } from "flowbite-react";
 import { HiUserCircle, HiOutlineTrash, HiOutlinePencilAlt, HiUserAdd } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
-import { getUser, deleteUser } from "../../modules/fetch/user";
-import { getAdmin, deleteAdmin } from "../../modules/fetch/admin";
+import { getUser, deleteUser, updateUser, getUserById } from "../../modules/fetch/user";
+import { getAdmin, deleteAdmin, updateAdmin, getAdminById } from "../../modules/fetch/admin";
 import TambahAdmin from "../form/formAddAdmin";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +14,126 @@ const UserList = () => {
     const [user, setUser] = useState([]);
     const [admin, setAdmin] = useState([]);
     const [isOpen, setIsOpen] = useState(false); 
+    const [formDatauser, setFormDatauser] = useState({
+        username: "",
+        email: "",
+        password: "",
+        NIM: "",
+        dept: ""
+    })
+    const [formDataadmin, setFormDataadmin] = useState({
+        username_admn: "",
+        email_admn: "",
+        password: "",
+        role: ""
+    })
+    const [openModal, setOpenModal] = useState(false);
+    const [openModal1, setOpenModal1] = useState(false);
+    const [id, setId] = useState("");
+
+    const handleChangeAdmin = () => {
+        setFormDataadmin({
+            ...formDataadmin,
+            [e.target.name]: e.target.value,
+        })
+    }
+
+    const handleEditAdminClick = async(id) => {
+        try {
+            // Fetch admin data
+            const responseAdmin = await getAdminById(id);
+            const admin = responseAdmin.data;
+
+            // Set state for admin form
+            setFormDataadmin({
+            username_admn: admin.username_admn, // Corrected typo
+            email_admn: admin.email_admn,
+            password: admin.password,
+            role: admin.role,
+            });
+
+        } catch (error) {
+            console.error("Error:", error.message);
+        }
+    }
+
+    const handleSubmitAdmin = async (e) => {
+        e.preventDefault();
+        const formData = formDataadmin
+        try {
+            console.log("data:", formData);
+            await updateAdmin(id, formData);
+            
+            console.log("User successfully Edit");
+            toast.success("User successfully Edit", {
+                position: "top-center",
+                hideProgressBar: true,
+                autoClose: 3000,
+            });
+
+        } catch (error) {
+            console.error("Error Edit User:", error.message);
+            toast.error("Error Edit User", {
+                position: "top-center",
+                hideProgressBar: true,
+                autoClose: 5000,
+            });
+    }}
+
+    const handldeChangeUsers = (e) => {
+        setFormDatauser({
+            ...formDatauser,
+            [e.target.name]: e.target.value,
+        })
+    }
+
+    const handleEditUserClick = async(id) => {
+        try {
+            // Fetch user data
+            const responseUser = await getUserById(id);
+            const user = responseUser.data;
+
+            // Debugging output
+            console.log("user:", user);
+            setId(user.id);
+
+            // Set state for user form
+            setFormDatauser({
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            NIM: user.NIM,
+            dept: user.dept,
+            });
+
+
+        } catch (error) {
+            console.error("Error:", error.message);
+        }
+    }
+
+    const handleSubmitUser = async (e) => {
+        e.preventDefault();
+        const formData = formDatauser
+        try {
+            console.log("data:", formData);
+            await updateUser(id, formData);
+            
+            console.log("User successfully Edit");
+            toast.success("User successfully Edit", {
+                position: "top-center",
+                hideProgressBar: true,
+                autoClose: 3000,
+            });
+
+        } catch (error) {
+            console.error("Error Edit User:", error.message);
+            toast.error("Error Edit User", {
+                position: "top-center",
+                hideProgressBar: true,
+                autoClose: 5000,
+            });
+    }}
 
     const handleCloseClick = () => {
         setIsOpen(false); 
@@ -84,25 +204,28 @@ const UserList = () => {
       };
 
     useEffect(() => {
-        try {
-            const fetchDataUser = async() => {
-                const resultUser = await getUser();
-                console.log(resultUser.data);
-                setUser(resultUser.data);
-                const resultAdmin =await getAdmin();
-                console.log(resultAdmin.data);
-                setAdmin(resultAdmin.data);
-            }
-            fetchDataUser();
-        } catch (error) {
-            console.log("Error fetching User", error)
-        }
+        const fetchDataUser = async() => {
+            try {
+                    const resultUser = await getUser();
+                    console.log(resultUser.data);
+                    setUser(resultUser.data);
+                    const resultAdmin =await getAdmin();
+                    console.log(resultAdmin.data);
+                    setAdmin(resultAdmin.data);
+                
+            } catch (error) {
+                console.log("Error fetching User", error)
+            }}
+        fetchDataUser();
     },[])
 
 
 
     return (
         <div>
+            <div className="py-4 mb-4">
+                <h1 className="text-2xl text-center font-bold">Pengelolaan User</h1>
+            </div>
             <Tabs aria-label="Default tabs" style="default">
                 <Tabs.Item active title="User" icon={HiUserCircle}>
                 <div className="items-center justify-center">
@@ -141,7 +264,7 @@ const UserList = () => {
                                         </td>
                                         <td className="py-3 px-4">J0303211144</td>
                                         <td className="flex py-3 px-4">
-                                            <a href="#" className="text-blue-600 hover:text-blue-800"><HiOutlinePencilAlt size={30}/></a>
+                                            <a onClick={() => {setOpenModal(true), handleEditUserClick(user.id)}} className="text-blue-600 hover:text-blue-800"><HiOutlinePencilAlt size={30}/></a>
                                             <button 
                                                 onClick={() =>handleDeleteUser(user.id)}
                                                 className="text-red-600 hover:text-red-800 px-2">
@@ -153,7 +276,101 @@ const UserList = () => {
                                     ))}
                             </tbody>
                         </table>
-                        
+                        <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
+                                                        <Modal.Header>
+                                                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                            Edit User
+                                                          </h3>
+                                                        </Modal.Header>
+                                                        <Modal.Body>
+                                                          <form onSubmit={handleSubmitUser} className="p-4 md:p-5">
+                                                            <div className="grid gap-4 mb-4 grid-cols-2">
+                                                              <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="username" value="Username"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="username"
+                                                                          name="username"
+                                                                          type="text"
+                                                                          placeholder="nama"
+                                                                          value={formDatauser.username}
+                                                                          onChange={handldeChangeUsers}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="email" value="Email"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="email"
+                                                                          name="email"
+                                                                          type="text"
+                                                                          placeholder="email"
+                                                                          value={formDatauser.email}
+                                                                          onChange={handldeChangeUsers}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="password" value="Password"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="password"
+                                                                          name="password"
+                                                                          type="text"
+                                                                          placeholder="password"
+                                                                          value={formDatauser.password}
+                                                                          onChange={handldeChangeUsers}
+                                                                          require
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="NIM" value="NIM"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="NIM"
+                                                                          name="NIM"
+                                                                          type="text"
+                                                                          placeholder="NIM"
+                                                                          value={formDatauser.NIM}
+                                                                          onChange={handldeChangeUsers}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="dept" value="Departemen"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="dept"
+                                                                          name="dept"
+                                                                          type="text"
+                                                                          placeholder="dept"
+                                                                          value={formDatauser.dept}
+                                                                          onChange={handldeChangeUsers}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                
+                                                              
+                                                            </div>
+                                                            <button
+                                                              type="submit"
+                                                              className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                            >
+                                                              Simpan
+                                                            </button>
+                                                          </form>
+                                                        </Modal.Body>
+                                                      </Modal>
                     </div>
                 </div>
                 </Tabs.Item>
@@ -197,7 +414,7 @@ const UserList = () => {
                                 {admin.role}
                             </td>
                             <td className="flex py-3 px-4">
-                                <a href="#" className="text-blue-600 hover:text-blue-800"><HiOutlinePencilAlt size={30}/></a>
+                                <a onClick={() => {setOpenModal1(true), handleEditAdminClick(admin.id)}} className="text-blue-600 hover:text-blue-800"><HiOutlinePencilAlt size={30}/></a>
                                 <button 
                                     onClick={()=> handleDeleteAdmin(admin.id)}
                                     className="text-red-600 hover:text-red-800 px-2">
@@ -209,6 +426,87 @@ const UserList = () => {
                             
                         </tbody>
                         </table>
+                        <Modal dismissible show={openModal1} onClose={() => setOpenModal1(false)}>
+                                                        <Modal.Header>
+                                                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                            Edit Admin
+                                                          </h3>
+                                                        </Modal.Header>
+                                                        <Modal.Body>
+                                                          <form onSubmit={handleSubmitAdmin} className="p-4 md:p-5">
+                                                            <div className="grid gap-4 mb-4 grid-cols-2">
+                                                              <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="username_admn" value="Username"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="username_admn"
+                                                                          name="username_admn"
+                                                                          type="text"
+                                                                          placeholder="nama"
+                                                                          value={formDataadmin.username_admn}
+                                                                          onChange={handleChangeAdmin}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="email_admn" value="Email"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="email_admn"
+                                                                          name="email_admn"
+                                                                          type="text"
+                                                                          placeholder="email"
+                                                                          value={formDataadmin.email_admn}
+                                                                          onChange={handleChangeAdmin}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="password" value="Password"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="password"
+                                                                          name="password"
+                                                                          type="text"
+                                                                          placeholder="password"
+                                                                          value={formDatauser.password}
+                                                                          onChange={handldeChangeUsers}
+                                                                          require
+                                                                        />
+                                                                      </div>
+                                                                      <div >
+                                                                        <div className="mb-2 block">
+                                                                          <Label htmlFor="role" value="role"  />
+                                                                        </div>
+                                                                      <TextInput
+                                                                          id="role"
+                                                                          name="role"
+                                                                          type="text"
+                                                                          placeholder="role"
+                                                                          value={formDataadmin.role}
+                                                                          onChange={handleChangeAdmin}
+                                                                          required
+                                                                          
+                                                                        />
+                                                                      </div>
+
+                                                
+                                                              
+                                                            </div>
+                                                            <button
+                                                              type="submit"
+                                                              className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                            >
+                                                              Simpan
+                                                            </button>
+                                                          </form>
+                                                        </Modal.Body>
+                                                      </Modal>
                     
                     </div>
                     {isOpen && 

@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { fileUpload } from '../../modules/fetch/file';
+import { FaRegFilePdf } from "react-icons/fa";
 
 const FileUpload = ({ onUpload }) => {
-    const [pdfFile, setpdfFile] = useState(null);
+    const [pdf, setPdf] = useState(null);
 
     const handleFileChange = (e) => {
-        setpdfFile(e.target.files[0]);
+        setPdf(e.target.files[0]);
     };
 
     const handleUpload = async () => {
+        console.log("pdf:", pdf)
+        if (!pdf) {
+            setError('Please select a file before uploading.');
+            return;
+        }
+
         const formData = new FormData();
-        formData.append('pdfFile', pdfFile);
+        formData.append('pdf', pdf);
 
         try {
             const response = await fileUpload(formData);
@@ -21,10 +28,18 @@ const FileUpload = ({ onUpload }) => {
         }
     };
 
+    const handleRemoveFile = () => {
+        setPdf(null);
+      };
+
     return (
         <div>
+            <div className="m-4 text-xl font-medium">
+                <h5>Masukan Surat Persetujuan</h5>
+            </div>
         <div className='flex justify-center'>
-            <label
+            {!pdf ? (
+                <label
                 className="flex max-w-sm cursor-pointer appearance-none justify-center rounded-md border border-dashed border-gray-300 bg-white px-3 py-6 text-sm transition hover:border-gray-400 focus:border-solid focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:opacity-75"
                 tabIndex="0">
                 <span htmlFor="photo-dropbox" className="flex items-center space-x-2">
@@ -58,19 +73,48 @@ const FileUpload = ({ onUpload }) => {
                         strokeWidth="24"></line>
                     </svg>
                     <span className="text-xs font-medium text-gray-600">
-                    Drop files to Attach, or 
-                    <span className="text-blue-600 underline">browse</span>
+                        Drop files to Attach, or 
+                        <span className="text-blue-600 underline"> browse</span>
                     </span>
                 </span>
-                <input id="photo-dropbox" type="file" className="sr-only" onChange={handleFileChange} />
+                <input id="pdf" type="file"  accept="application/pdf" className="sr-only" onChange={handleFileChange} />
             </label>
+            ) : (
+                <div className="mt-2 flex items-center space-x-2 py-2.5">
+                    <FaRegFilePdf />
+                    <span className="text-gray-600 text-sm">{pdf.name}</span>
+                    <button
+                        onClick={handleRemoveFile}
+                        className="text-red-500 hover:text-red-700 focus:outline-none"
+                    >
+                        <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                        </svg>
+                    </button>
+                </div>
+            )}
         
             
         </div>
-        <button 
-            onClick={handleUpload}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        >Upload</button>
+
+        { pdf && 
+            <button 
+                onClick={handleUpload}
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 m-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            >Upload
+            </button>
+        }
+        
         </div>
     );
 };

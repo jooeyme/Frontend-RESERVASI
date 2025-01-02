@@ -16,9 +16,11 @@ import {
   startOfToday,
   startOfWeek,
 } from 'date-fns'
+import id from 'date-fns/locale/id'
 import { useState } from 'react'
-import { FaHourglassHalf, FaCheckCircle, FaTimesCircle,  } from 'react-icons/fa';
+import { FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaCheckDouble,  } from 'react-icons/fa';
 
+const locale = id
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -59,12 +61,12 @@ export default function CalenderBooking({bookings}) {
 
   return (
     <div>
-      <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-6xl md:px-6">
+      <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-full md:px-6">
         <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
           <div className="md:pr-14">
             <div className="flex items-center">
               <h2 className="flex-auto font-semibold text-gray-900">
-                {format(firstDayCurrentMonth, 'MMMM yyyy')}
+                {format(firstDayCurrentMonth, 'MMMM yyyy', {locale})}
               </h2>
               <button
                 type="button"
@@ -146,9 +148,9 @@ export default function CalenderBooking({bookings}) {
           </div>
           <section className="mt-12 md:mt-0 md:pl-14">
             <h2 className="font-semibold text-gray-900">
-              Schedule for{' '}
+              Jadwal untuk{' '}
               <time dateTime={format(selectedDay, 'yyyy-MM-dd')}>
-                {format(selectedDay, 'MMM dd, yyy')}
+                {format(selectedDay, 'eeee, dd MMMM yyyy', {locale})}
               </time>
             </h2>
             <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500">
@@ -157,7 +159,7 @@ export default function CalenderBooking({bookings}) {
                   <Meeting booking={booking} key={booking.id} />
                 ))
               ) : (
-                <p>No meetings for today.</p>
+                <p>Tidak ada pertemuan untuk hari ini.</p>
               )}
             </ol>
           </section>
@@ -180,10 +182,12 @@ function Meeting({ booking }) {
         {booking.booking_status === 'approved' && <FaCheckCircle style={{color: "green"}} size={30} />}
         {booking.booking_status === 'rejected' && <FaTimesCircle style={{color: "red"}} size={30}/>}            
         {booking.booking_status === 'pending' && <FaHourglassHalf style={{color: "gray"}} size={30}/>} 
+        {booking.booking_status === 'returned' && <FaCheckDouble style={{color: "blue"}} size={30}/>}
                 
       </span>
       <div className="flex-auto">
-        <p className="text-gray-900">{booking.peminjam}</p>
+        <p className="text-gray-900">{booking.desk_activity}</p>
+        <p className="text-gray-800">{booking.room_id ? booking.Room.name_room : booking.Tool.name_tool}</p>
         <p className="mt-0.5">
           <time dateTime={booking.start_time}>
             {format(startTime, 'h:mm a')}

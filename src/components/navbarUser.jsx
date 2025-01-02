@@ -3,6 +3,7 @@ import { FaUserCircle } from "react-icons/fa";
 import Logout from './LogOut';
 import { jwtDecode } from "jwt-decode";
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo_ipb.png';
 
 const NavbarUser = ({ toggleSidebar }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -76,7 +77,7 @@ const NavbarUser = ({ toggleSidebar }) => {
               </svg>
             </button>
             <a className="flex ml-2 md:mr-24">
-              <img src="src/components/logo_ipb.png" className="h-8 mr-3" alt="Logo" />
+              <img src={logo} className="h-8 mr-3" alt="Logo" />
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                 IPB MNH
               </span>

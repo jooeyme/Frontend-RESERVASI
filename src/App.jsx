@@ -14,6 +14,7 @@ import DetailRoom from './pages/detailRoom'
 import DetailTool from './pages/detailTool'
 import DaftarPegawai from './pages/daftarPegawai'
 import DetailPegawai from './pages/detailPegawai'
+import EditEmployee from './pages/editEmployee';
 import HomeAdmin from './pages/homeAdmin'
 import RoomsforEdit from './pages/inventarisRoom'
 import ToolsforEdit from './pages/inventarisTool'
@@ -27,14 +28,36 @@ import UserListPage from './pages/ListUserPage';
 import RegisterPage from './pages/Register';
 import ListFile from './pages/fileList';
 import ListFileUser from './pages/fileListUser';
+import RequestLetter from './pages/reqletter';
+import GeneratePDF from './pages/generatePDF';
+import Document from './pages/Document';
+import SessionExpired from './pages/sessionExpired';
 
 function App() {
 
   return (
     <>
       <Router>
-      
-        <Routes> 
+        <Routes>
+
+          <Route 
+            path={"/expired"}
+            element={<SessionExpired />}
+          />
+          <Route 
+            path={"/doc"}
+            element={<Document />}
+          />
+          <Route 
+            path={"/make"}
+            element={<GeneratePDF />}
+          />
+
+          <Route 
+            path={"/req"}
+            element={<RequestLetter/>}
+          /> 
+          
           <Route 
             path={"/file"}
             element={<ListFile />}
@@ -73,6 +96,11 @@ function App() {
           <Route 
             path={"/pegawai/:id"}
             element={<DetailPegawai/>}
+          /> 
+
+          <Route 
+            path={"/edit-pegawai/:id"}
+            element={<EditEmployee/>}
           /> 
 
           <Route 

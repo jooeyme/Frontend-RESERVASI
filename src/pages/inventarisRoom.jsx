@@ -41,7 +41,7 @@ const RoomsforEdit= () => {
             setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
             toast('Data Ruangan berhasil dihapus.', { type: 'success' });
         } catch (error) {
-            console.error("Error deleting job:", error.message);
+            console.error("Error deleting Room:", error.message);
             toast('Gagal menghapus Ruangan. Silahkan coba lagi.', { type: 'error' });
         } 
       }
@@ -76,8 +76,6 @@ const RoomsforEdit= () => {
             </div>
         )))}
       </div>
-      
-      
     </div>
     </div>
     </MainLayoutAdmin>

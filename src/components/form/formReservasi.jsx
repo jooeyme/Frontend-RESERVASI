@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createBookingRoom } from '../../modules/fetch/reservasi';
 
 
 const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
-    const navigate = useNavigate();
+    
     const [formData, setFormData] = useState({
         room_id: RoomId,
         peminjam: '',
@@ -34,11 +33,14 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
     
     const today = new Date();
     const selectedDate = new Date(formData.booking_date);
-    
+    console.log("today: ", today);
+    console.log("selectedDate: ", selectedDate);
+    console.log("starttime:", formData.start_time);
+    console.log("endtime:", formData.end_time);
 
-    if (selectedDate < today) {
+    if (selectedDate <= today) {
         console.error("Tanggal harus di masa sekarang atau masa depan");
-        toast.error('Error Booking', {
+        toast.error('Reservasi maksimal dilakukan H-1 acara', {
             position: 'top-center',
             hideProgressBar: true,
             autoClose: 5000
@@ -77,7 +79,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
         
     } catch (error) {
         console.error('Error Booking:', error.message);
-        toast.error('Error Booking', {
+        toast.error(`Error Booking ${error.message}`, {
             position: 'top-center',
             hideProgressBar: true,
             autoClose: 5000
@@ -92,7 +94,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
         <form onSubmit={handleSubmit} >
             <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Data Reservasi</h5>
             
-            <div>
+            <div className='py-2'>
                 <label htmlFor="peminjam" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Nama Penanggungjawab</label>
                 <input 
                     type="text" 
@@ -104,7 +106,8 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                     placeholder="Nama Lengkap" 
                     required />
             </div>
-            <div>
+
+            <div className='py-2'>
                 <label htmlFor="kontak" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Kontak</label>
                 <input 
                     type="text" 
@@ -116,7 +119,8 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
                     required />
             </div>
-            <div>
+
+            <div className='py-2'>
                 <label htmlFor="dept" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
                     Departemen
                 </label>
@@ -130,7 +134,8 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
                     required />
             </div>
-            <div>
+
+            <div className='py-2'>
                 <label htmlFor="desk_activity" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
                     Kegiatan/Forum
                 </label>
@@ -145,7 +150,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                     required />
             </div>
 
-            <div>
+            <div className='py-2'>
                 <label htmlFor="booking_date" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">Tanggal Reservasi</label>
                 <input 
                     type="Date" 
@@ -185,7 +190,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 gap-6 py-2'>
+            <div className='grid grid-cols-2 gap-6 pt-4 pb-2'>
                 <div className="col-span-2 sm:col-span-1">
                     <button 
                     type="button"

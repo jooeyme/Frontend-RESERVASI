@@ -1,249 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from "react-router-dom";
-import {ToastContainer, toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { findPegawaibyId, editIdentitas, editJabatan, editPNS, editPangkat } from '../../modules/fetch/pegawai';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { findPegawaibyId } from "../../modules/fetch/pegawai";
+import ListDocument from "../table/documentList";
+import {
+  getDocumentsByEmployeeId,
+} from "../../modules/fetch/document";
+import { Avatar  } from "flowbite-react";
+import { ChevronLeftIcon } from '@heroicons/react/solid'
 
-const gender = {
-    L: 'Laki-laki',
-    P: 'Perempuan',
-}
+
 
 const IdentitasformCard = () => {
-    const { id } = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [document, setDocument] = useState([]);
+  const [detail, setDetail] = useState({});
+  const [nip, setNip] = useState("");
 
-    const [formData, setFormData] = useState({
-        name: '',
-        NIP: '',
-        KPE: '',
-        NIDN: '',
-        agama: '',
-        gender: '',
-        nokarpeg: '',
-        lahir: '',
-        ttl: '',
-        umur: '',
-    })
-
-    const handleChange = (e) => {
-        console.log("Handling change:", e.target.name, e.target.value);
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+  useEffect(() => {
+    const fetchUpdateProfil = async () => {
+      try {
+        const pegawai = await findPegawaibyId(id);
+        const nip = pegawai.data.NIP;
+        setNip(nip);
+        setDetail(pegawai.data);
+        console.log('detail:', pegawai.data);
+        const response = await getDocumentsByEmployeeId(nip);
+        console.log('response:', response);
+        setDocument(response.data);
+        //console.log("document:", response.data);
+      } catch (error) {
+        console.error("Error fetching profil pegawai data:", error.message);
+      }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-    
-        try {
-            await editIdentitas(id, formData);
-    
-            console.log("profil updated");
-            toast.success("profil updated", {
-                position: toast.POSITION.TOP_CENTER,
-                hideProgressBar: true,
-                autoClose: 3000,
-            });
+    fetchUpdateProfil();
+  }, [id]);
 
-            //setTimeout(() => {
-            //    navigate("/joblist");
-            //}, 2000);
-        } catch (error) {
-            console.error("Error updating profil:", error.message);
-            toast.error(`Error updating profil: ${error.message}`, {
-                position: toast.POSITION.TOP_CENTER,
-                hideProgressBar: true,
-                autoClose: 5000,
-            });
-        }
-    };
-
-    useEffect(() => {
-        const fetchUpdateProfil = async () => {
-            try {
-            const response = await findPegawaibyId(id)
-            const pegawai = response.data;
-            setFormData({
-                name: pegawai.name,
-                NIP: pegawai.NIP,
-                KPE: pegawai.KPE,
-                NIDN: pegawai.NIDN,
-                agama: pegawai.agama,
-                gender: pegawai.gender,
-                nokarpeg: pegawai.nokarpeg,
-                lahir: pegawai.lahir,
-                ttl: pegawai.ttl,
-                umur: pegawai.umur,
-            });
-            } catch (error) {
-            console.error("Error fetching profil pegawai data:", error.message);
-            }
-        };
-    
-        fetchUpdateProfil();
-    }, []);
-
-    
-    
+  console.log("document:", document);
   return (
     <>
-    <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-        <form onSubmit={handleSubmit} className="space-y-6" >
-            <h5 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h5>
-            <div>
-                <label htmlFor="name" 
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Nama Lengkap
-                </label>
-                <input 
-                    type="text" 
-                    name="name" 
-                    id="name"  
-                    value={formData.name} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="Nama Lengkap" 
-                    required />
-            </div>
-            <div>
-                <label htmlFor="NIP" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    NIP
-                </label>
-                <input 
-                    type="text" 
-                    name="NIP"
-                    id="NIP" 
-                    value={formData.NIP} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="Nomor Induk Pegawai" 
-                    required />
-            </div>
-            <div>
-                <label htmlFor="KPE" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kontak Penanggungjawab</label>
-                <input 
-                    type="text" 
-                    name="KPE" 
-                    id="KPE" 
-                    value={formData.KPE} 
-                    onChange={handleChange}
-                    placeholder="KPE" 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
-                    required />
-            </div>
-
-            <div>
-                <label htmlFor="NIDN" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Reservasi</label>
-                <input 
-                    type="text" 
-                    name="NIDN" 
-                    id="NIDN" 
-                    value={formData.NIDN}  
-                    onChange={handleChange}
-                    placeholder="NIDN" 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
-                    required />
-            </div>
-
-            <div>
-                <label htmlFor="agama" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Waktu mulai</label>
-                <input 
-                    type="text" 
-                    name="agama" 
-                    id="agama" 
-                    value={formData.agama}   
-                    onChange={handleChange}
-                    placeholder="agama" 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
-                    required />
-            </div>
-
-            <div>
-                <label htmlFor="gender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Waktu selesai</label>
-                <select 
-                    name="gender" 
-                    id="gender"  
-                    value={formData.gender}    
-                    onChange={handleChange} 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
-                    required >
-
-                        <option value={gender.L}>Laki-laki</option>
-                        <option value={gender.P}>Perempuan</option>
-
-                    </select>
-            </div>
-            <div>
-                <label htmlFor="nokarpeg" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    NOKARPEG
-                </label>
-                <input 
-                    type="text" 
-                    name="nokarpeg"
-                    id="nokarpeg" 
-                    value={formData.nokarpeg} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="Nomor karppeg" 
-                    required />
-            </div>
-            <div>
-                <label htmlFor="lahir" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    tempat lahir
-                </label>
-                <input 
-                    type="text" 
-                    name="lahir"
-                    id="lahir" 
-                    value={formData.lahir} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="tempat lahir" 
-                    required />
-            </div>
-            <div>
-                <label htmlFor="ttl" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    tanggal lahir
-                </label>
-                <input 
-                    type="date" 
-                    name="ttl"
-                    id="ttl" 
-                    value={formData.ttl} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    placeholder="tanggal lahir" 
-                    required />
-            </div>
-            <div>
-                <label htmlFor="umur" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Umur
-                </label>
-                <input 
-                    type="number" 
-                    name="umur"
-                    id="umur" 
-                    value={formData.umur} 
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"    
-                    
-                    required />
-            </div>
-
+    <div className="flex justify-start">
+                            <Link to={`/daftar-pegawai`}
+                            className="flex items-center justify-center">
+                        <button
+                            type="button"
+                            className="-my-1.5 flex items-center justify-center text-gray-400 hover:text-gray-500"
+                        >
+                            <span className="sr-only">Previous</span>
+                            <ChevronLeftIcon className="w-8 h-8" aria-hidden="true"/>
+                        </button>
+                        </Link>
+                        <h2 className="flex text-xl font-bold text-gray-900 dark:text-white">Detail Pegawai</h2>
+                        </div>
+      <div className="flex justify-center">
+        <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <div className="flex flex-col items-center py-10">
+            <Avatar rounded size="lg"/>
+            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+              {detail.name}
+            </h5>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {detail.jabatan}
+            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {detail.NIP}
+            </span>
+            <div className="flex mt-4 md:mt-6 gap-8">
             <button 
-                type="submit"
-                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Kirim
-            </button>
-            
-        </form>
-        <ToastContainer/>
-    </div>
+                    type="button" 
+                    onClick={() => navigate(``)}
+                    className=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mb-2 my-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >Detail</button>
+              <button 
+                    type="button" 
+                    onClick={() => navigate(`/edit-pegawai/${id}`)}
+                    className=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 my-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    >Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    
-    
-
+      <ListDocument file={document} nip={nip}/>
+      <ToastContainer/>
     </>
   );
 };

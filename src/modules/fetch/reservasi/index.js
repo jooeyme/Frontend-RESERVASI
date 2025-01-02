@@ -80,4 +80,43 @@ async function deleteBooking (id) {
         throw new Error(error.response.data.message || "Something went wrong");
     }
 }
-export { createBookingRoom, deleteBooking, createBookingTool,findAllBooking, findAllBookingByUserId, getBookingByRoomId, getBookingByToolId, editBooking, showBookingById};
+
+async function DownloadAllBooking(year, month) {
+    try {
+        const response = await instance.get(`/booking/excel/${year}/${month}`, {
+            responseType: 'blob'
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+async function getTodayBookings() {
+    try {
+        const response = await instance.get(`/booking/day/teh`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+async function turnInTool(id) {
+    try {
+        const response = await instance.post(`/booking/return/${id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+async function turnInRoom(id) {
+    try {
+        const response = await instance.post(`/booking/return-room/${id}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "Something went wrong");
+    }
+}
+
+export { turnInRoom, turnInTool, getTodayBookings, DownloadAllBooking, createBookingRoom, deleteBooking, createBookingTool,findAllBooking, findAllBookingByUserId, getBookingByRoomId, getBookingByToolId, editBooking, showBookingById};

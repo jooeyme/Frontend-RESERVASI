@@ -133,7 +133,7 @@ const FormRoom = () => {
                 onChange={handleInputChange}
                 value={formData.alamat_room}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                required
+                
                 />
             </div>
 
@@ -149,7 +149,7 @@ const FormRoom = () => {
                 onChange={handleInputChange}
                 value={formData.kapasitas}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                required
+                
               />
             </div>
 
@@ -165,7 +165,7 @@ const FormRoom = () => {
                 onChange={handleInputChange}
                 value={formData.luas}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                required
+                
               />
             </div>
 
@@ -181,7 +181,7 @@ const FormRoom = () => {
                 name='gambar_room'
                 onChange={handleImageChange}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full "
-                required
+                
               />
               {preview && (
                 <div className="image-preview">
@@ -206,7 +206,7 @@ const FormRoom = () => {
                 onChange={handleInputChange}
                 value={formData.deskripsi_room}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full min-h-5"
-                required
+                
               ></textarea>
             </div>
 
@@ -222,7 +222,7 @@ const FormRoom = () => {
                 onChange={handleInputChange}
                 value={formData.fasilitas}
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                required
+                
               ></textarea>
             </div>
             </div>
