@@ -1,15 +1,15 @@
 import React, {useState, useEffect, useRef } from 'react';
 import { FaUserCircle } from "react-icons/fa";
 import logo from '../assets/logo_ipb.png';
+import Logout from './LogOut';
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, admin }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-
   
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -58,7 +58,7 @@ const Navbar = ({ toggleSidebar }) => {
               </span>
             </a>
           </div>
-          <div className="flex items-center">
+          <div className="flex">
             <button
               type="button"
               className="flex text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
@@ -78,38 +78,14 @@ const Navbar = ({ toggleSidebar }) => {
                 aria-labelledby="user-menu-button"
               >
                 <div className="px-4 py-3">
-                  <span className="block text-sm text-gray-900 dark:text-white">Kevin Ade Wijaya</span>
+                  <span className="block text-sm text-gray-900 dark:text-white">{admin.username_admn}</span>
                   <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                    k.abdulrahman@ipb.ac.id
+                    {admin.email_admn}
                   </span>
                 </div>
                 <ul className="py-1" role="none">
                   <li>
-                    <a
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Profile
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Settings
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/sign-out"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                      role="menuitem"
-                    >
-                      Sign out
-                    </a>
+                    <Logout />
                   </li>
                 </ul>
               </div>

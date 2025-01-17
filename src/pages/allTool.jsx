@@ -12,7 +12,6 @@ const ToolsPage = () => {
     const fetchData = async () => {
       try {
         const response = await findAllTool();
-        console.log('Response:', response.data );
         setTools(response.data);
         
       } catch (error) {

@@ -56,7 +56,6 @@ const HomeUser = () => {
   const fetchDataBookTheDay = async () => {
     try {
       const bookings = await findAllBooking();
-      console.log("BookTheDay:", bookings);
 
       setAllBooking(bookings.data);
     } catch (error) {

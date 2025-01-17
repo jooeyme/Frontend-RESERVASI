@@ -26,8 +26,7 @@ const RegisterUser = () => {
             
             navigate('/login');
         } catch (error) {
-            console.error('Registration Error:',error.response?.data || error.message);
-            console.log("pw:", password, "=", confirmPassword)
+            console.error('Registration Error:');
             setError('Registration failed. Please try again.');
         }
     };

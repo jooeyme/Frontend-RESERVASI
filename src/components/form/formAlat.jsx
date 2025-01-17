@@ -15,7 +15,8 @@ const FormAlat = () => {
         jumlah: '',
         deskripsi: '',
         gambar_tool: '',
-    
+        require_double_verification: false,
+        type: '',
     });
 
     const handleInputChange = (e) => {
@@ -54,9 +55,10 @@ const FormAlat = () => {
                 jumlah: '',
                 deskripsi: '',
                 gambar_tool: '',
+                require_double_verification: false,
+                type: '',
             });
 
-            console.log('Tool Added successfully');
             toast.success('Tool Added successfully', {
                 position: 'top-center',
                 hideProgressBar: true,
@@ -204,6 +206,41 @@ const FormAlat = () => {
                             required
                         />
                     </div>
+
+                    <div className="flex mb-4 gap-5">
+                        <label htmlFor="require_double_verification" className="block text-left text-sm font-semibold font-poppins">
+                            Double Verification
+                        </label>
+                        <input
+                            type="checkbox"
+                            id="require_double_verification"
+                            name="require_double_verification"
+                            onChange={handleInputChange}
+                            value={formData.require_double_verification}
+                            className="p-2.5 border border-gray-300 rounded-md"
+                        />
+                        <label className="block text-left text-sm font-semibold font-poppins">
+                            Iya
+                        </label>
+                        </div>
+                        <div className="mb-4">
+                        <label htmlFor="type" className="block text-left text-sm font-semibold font-poppins">
+                            type alat
+                        </label>
+                        <select  
+                            name="type" 
+                            id="type" 
+                            value={formData.type}  
+                            onChange={handleInputChange} 
+                            className="mt-1 p-2 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            required 
+                            >
+                                <option value="">-- Pilih jenis alat --</option>
+                                <option value="lab">Alat Laboratorium</option>
+                                <option value="multimedia">Alat Multimedia</option>
+                                
+                            </select>
+                        </div>
                 </div>
 
             </div>

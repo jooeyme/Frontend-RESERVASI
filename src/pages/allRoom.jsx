@@ -12,7 +12,6 @@ const RoomsPage = () => {
     const fetchData = async () => {
       try {
         const response = await findAllRoom();
-        console.log('Response:', response.data );
         setRooms(response.data);
         
       } catch (error) {
@@ -25,7 +24,6 @@ const RoomsPage = () => {
 
   const showRoomDetails = (room) => {
     setSelectedRoom(room);
-    console.log("selected:", selectedRoom)
   };
 
   const hideRoomDetails = () => {

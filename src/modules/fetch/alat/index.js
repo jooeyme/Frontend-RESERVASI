@@ -31,6 +31,15 @@ async function findAllTool() {
   }
 }
 
+async function findAllToolId() {
+  try {
+    const response = await instance.get("/tool/toolId");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Something went wrong");
+  }
+}
+
 async function showToolById(id) {
   try {
     const response = await instance.get(`/tool/${id}`);
@@ -51,4 +60,4 @@ async function editTool(id, formData) {
   }
 }
 
-export { createAlat, showToolById, findAllTool, editTool, deleteTool };
+export { createAlat, showToolById, findAllTool, editTool, deleteTool, findAllToolId };

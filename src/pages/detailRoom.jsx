@@ -32,10 +32,8 @@ const DetailRoom = () => {
     const handleClick  = () => {
         handleReserveNow();
         setIsOpen(true)
-        console.log(detail.room_id);
         if (detail.room_id) {
             handleSelectRoom(detail.room_id);
-            console.log(selectedRoomId);
         } else {
             console.error("Room ID is not defined");
         }
@@ -49,18 +47,13 @@ const DetailRoom = () => {
                 const room_id = detailJobData.room_id;
                 if(room_id !== null && room_id !== undefined){
                     const bookings = await getBookingByRoomId(room_id)
-                    console.log("data:",bookings.data)
                     const Booking = bookings.data
                     setBooking(Booking);
                     
                 }else {
                     return res.status(404).json({ message: `room_id: ${room_id} null?` });
                 }
-                console.log("bookingbyRoomId:",booking)
                 setDetail(detailJobData);
-                console.log("detail:",detail)
-            ;
-            
         } catch (e) {
             console.log("Error fetching detail Room", e);
         };
@@ -69,7 +62,7 @@ const DetailRoom = () => {
     }, [selectedRoomId]);
     
     const token = localStorage.getItem('token');
-          console.log(token);
+    
 
     const handleShowAlert = () => {
         Swal.fire({
@@ -156,7 +149,7 @@ const DetailRoom = () => {
                 </div>
                 
                 {showForm && isOpen && 
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 pt-20 overflow-auto">
+                <div className="fixed top-0 left-0 w-full h-full flex justify-center bg-gray-900 bg-opacity-50 z-50 py-10 overflow-auto">
                     <ReservationRoomCard RoomId={selectedRoomId}
                     isOpen={isOpen} 
                     handleCloseClick={handleCloseClick}

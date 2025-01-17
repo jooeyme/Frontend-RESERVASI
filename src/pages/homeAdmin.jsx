@@ -5,7 +5,7 @@ import { findAllRoom } from "../modules/fetch/rooms";
 import { findAllTool } from "../modules/fetch/alat";
 import { findAllBooking } from "../modules/fetch/reservasi";
 import { jwtDecode } from "jwt-decode";
-
+import Booking_admin from "../components/table/adminBooking";
 
 const HomeAdmin = () => {
     const [ isLoggedIn, setIsLoggedIn] = useState(false);
@@ -98,6 +98,7 @@ const HomeAdmin = () => {
                     </div>
                 </div>
                 </div>
+                <Booking_admin/>
                 
             </MainLayoutAdmin>
         </>

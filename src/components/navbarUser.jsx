@@ -5,12 +5,9 @@ import { jwtDecode } from "jwt-decode";
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo_ipb.png';
 
-const NavbarUser = ({ toggleSidebar }) => {
+const NavbarUser = ({ toggleSidebar, User }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
-    const [email, setEmail] = useState('')
-    const [username, setUsername] = useState('')
-    const [decodeToken, setDecodeToken] = useState(null)
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -23,25 +20,6 @@ const NavbarUser = ({ toggleSidebar }) => {
     };
 
     useEffect(() => {
-      const token = localStorage.getItem('token');
-    
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          const username = decoded.username; // Access the 'username' property
-          const email = decoded.email; // Access the 'email' property
-          setEmail(email);
-          setUsername(username); 
-          setDecodeToken(decoded);
-        } catch (error) {
-          console.error('Error decoding token:', error);
-          // Handle invalid or expired token gracefully (e.g., redirect to login)
-        }
-      } else {
-        // Handle the case where there is no token (e.g., redirect to login)
-        console.error('No token found');
-        // navigate to login or handle the error
-      }
 
       if (dropdownOpen) {
         document.addEventListener('mousedown', handleClickOutside);
@@ -103,14 +81,14 @@ const NavbarUser = ({ toggleSidebar }) => {
                 aria-labelledby="user-menu-button"
               >
                 <div className="px-4 py-3">
-                  <span className="block text-sm text-gray-900 dark:text-white">{username}</span>
+                  <span className="block text-sm text-gray-900 dark:text-white">{User.username}</span>
                   <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                    {email}
+                    {User.email}
                   </span>
                 </div>
                 <ul className="py-1" role="none">
                   <li>
-                    {!decodeToken ? (
+                    {!User ? (
                       <Link to={"/login"}>
                       <button >Login</button>
                     </Link>

@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Tabs } from "flowbite-react";
 import {
-  findAllBooking,
-  editBooking,
+  getAllTrackingBookings,
+  DownloadAllRoomBooking,
+  DownloadAllRoomRecapPDF,
   showBookingById,
-  DownloadAllToolRecapPDF,
-  DownloadAllToolBooking
 } from "../../modules/fetch/reservasi/index";
 import ReservationCard from "../card/reservasiCard";
 import { format, parse } from "date-fns";
@@ -18,61 +17,11 @@ import {
   FaCheckDouble,
 } from "react-icons/fa";
 import ComponentPagination from "../pagination";
-import * as XLSX from "xlsx";
 import Datepicker from "react-tailwindcss-datepicker";
 import Swal from "sweetalert2";
+import { Button, Modal } from "flowbite-react";
 
-const statusOptions = [
-  {
-    value: "pending",
-    label: (
-      <div className="flex items-center">
-        <FaHourglassHalf className="mr-2" />
-        Pending
-      </div>
-    ),
-  },
-  {
-    value: "approved",
-    label: (
-      <div className="flex items-center">
-        <FaCheckCircle className="mr-2" style={{ color: "green" }} />
-        Approved
-      </div>
-    ),
-  },
-  {
-    value: "rejected",
-    label: (
-      <div className="flex items-center">
-        <FaTimesCircle className="mr-2" style={{ color: "red" }} />
-        Rejected
-      </div>
-    ),
-  },
-];
-
-const CustomSelect = ({ booking, handleChangeStatus }) => {
-  const handleChange = (selectedOption) => {
-    handleChangeStatus(booking.id, selectedOption.value);
-  };
-
-  const selectedOption = statusOptions.find(
-    (option) => option.value === booking.booking_status
-  );
-
-  return (
-    <Select
-      value={selectedOption}
-      onChange={handleChange}
-      options={statusOptions}
-      className="w-full"
-      classNamePrefix="react-select"
-    />
-  );
-};
-
-const BookingToolList = () => {
+const TrackTableBooking = () => {
   const navigate = useNavigate();
   const [booking, setBooking] = useState([]);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
@@ -81,10 +30,9 @@ const BookingToolList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const tabsRef = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [value, setValue] = useState({
-    startDate: null,
-    endDate: null,
-  });
+  const [selectedTracking, setSelectedTracking] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [value, setValue] = useState({ startDate: null, endDate: null });
 
   const handleCloseClick = () => {
     setIsOpen(false); // Update state to hide the card
@@ -98,25 +46,21 @@ const BookingToolList = () => {
 
       setSelectedBookingId(book);
     } catch (error) {
-      console.log("error:", error);
+      Swal.fire({
+        title: "Error!",
+        text: `Internal server error: ${error.message}`,
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     }
   };
 
   useEffect(() => {
-    const filteredRoomBookings = [];
-    const filteredToolBookings = [];
     try {
       const fetchBooking = async () => {
-        const response = await findAllBooking();
-        const bookingData = response.data;
-        bookingData.forEach((booking) => {
-          if (booking.tool_id === null) {
-            filteredRoomBookings.push(booking);
-          } else {
-            filteredToolBookings.push(booking);
-          }
-        });
-        setBooking(filteredToolBookings);
+        const response = await getAllTrackingBookings();
+        setBooking(response);
       };
       fetchBooking();
     } catch (e) {
@@ -128,175 +72,71 @@ const BookingToolList = () => {
     setValue(newValue);
   };
 
-  const handleDownloadPDF = async () => {
-      const { startDate, endDate } = value;
-  
-      if (!startDate || !endDate) {
+  const handleDownloadExcel = async () => {
+    const { startDate, endDate } = value;
+
+    if (!startDate || !endDate) {
       Swal.fire({
-          title: "Perhatian!",
-          text: `Tolong pilih rentang tanggal`,
-          icon: "info",
-          timer: 2000,
-          showConfirmButton: true,
-          });
+        title: "Perhatian!",
+        text: `Tolong pilih rentang tanggal`,
+        icon: "info",
+        timer: 2000,
+        showConfirmButton: true,
+        });
       return;
-      }
-  
-      try {
-          await DownloadAllToolRecapPDF(startDate, endDate);
-          Swal.fire({
-          title: "Berhasil!",
-          text: `file Tool rekap PDF downloaded successfully`,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-          });
-      } catch (error) {
-          Swal.fire({
-          title: "Error!",
-          text: `Error downloading file Tool rekap`,
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-          });
-      }
-      };
+    }
 
-      const handleDownloadExcel = async () => {
-        const { startDate, endDate } = value;
-    
-        if (!startDate || !endDate) {
-          Swal.fire({
-            title: "Perhatian!",
-            text: `Tolong pilih rentang tanggal`,
-            icon: "info",
-            timer: 2000,
-            showConfirmButton: true,
-            });
-          return;
-        }
-    
-        try {
-          await DownloadAllToolBooking(startDate, endDate);
-          Swal.fire({
-            title: "Berhasil!",
-            text: `file Tool rekap Excel downloaded successfully`,
-            icon: "success",
-            timer: 2000,
-            showConfirmButton: false,
-            });
-        } catch (error) {
-          Swal.fire({
-            title: "Error!",
-            text: `Error downloading file Tool rekap`,
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-            });
-        }
-      };
-
-  const handleChangeStatus = async (id, newStatus) => {
-    if (newStatus === "rejected") {
+    try {
+      await DownloadAllRoomBooking(startDate, endDate);
       Swal.fire({
-        title: "Konfirmasi tindakan",
-        input: "textarea",
-        text: `Apakah yakin ingin "${newStatus}" reservasi ini?`,
-        icon: "question",
-        inputLabel: "Keterangan",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Ya",
-        cancelButtonText: "Batal",
-
-        inputValidator: (value) => {
-          if (!value) {
-            return "You need to write a reason!";
-          }
-        },
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const note = result.value;
-          try {
-            const formData = { booking_status: newStatus, note };
-            const response = await editBooking(id, formData);
-            if (response.status === 200) {
-              setBooking((prevBookings) => {
-                const updatedBookings = prevBookings.map((booking) =>
-                  booking.id === id
-                    ? { ...booking, booking_status: newStatus }
-                    : booking
-                );
-                return updatedBookings;
-              });
-            } else {
-              // Tampilkan pesan error jika update status gagal
-              console.error("Gagal memperbarui status reservasi:", response);
-            }
-            Swal.fire({
-              title: "Berhasil!",
-              text: `Status booking berhasil diubah menjadi "${newStatus}".`,
-              icon: "success",
-              timer: 2000,
-              showConfirmButton: false,
-            });
-          } catch (error) {
-            Swal.fire({
-              title: "Error!",
-              text: "Gagal melakukan ubah status booking. Coba lagi.",
-              icon: "error",
-            });
-            console.error(
-              "Terjadi kesalahan saat memperbarui status reservasi:",
-              error
-            );
-          }
-        }
+        title: "Berhasil!",
+        text: `file Room rekap Excel downloaded successfully`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
       });
-    } else {
+    } catch (error) {
       Swal.fire({
-        title: "Konfirmasi tindakan",
-        text: `Apakah yakin ingin "${newStatus}" reservasi ini?`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Ya",
-        cancelButtonText: "Batal",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            const formData = { booking_status: newStatus };
-            const response = await editBooking(id, formData);
+        title: "Error!",
+        text: `Error downloading file Room rekap Excel`,
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+        });
+    }
+  };
 
-            if (response.status === 200) {
-              // Update daftar reservasi di state
-              setBooking((prevBookings) => {
-                const updatedBookings = prevBookings.map((booking) =>
-                  booking.id === id
-                    ? { ...booking, booking_status: newStatus }
-                    : booking
-                );
-                return updatedBookings;
-              });
-            } else {
-              // Tampilkan pesan error jika update status gagal
-              console.error("Gagal memperbarui status reservasi:", response);
-            }
-          } catch (error) {
-            Swal.fire({
-              title: "Error!",
-              text: "Failed to update booking status. Please try again.",
-              icon: "error",
-            });
-            console.error(
-              "Terjadi kesalahan saat memperbarui status reservasi:",
-              error
-            );
-          }
-        }
+  const handleDownloadPDF = async () => {
+    const { startDate, endDate } = value;
+
+    if (!startDate || !endDate) {
+      Swal.fire({
+        title: "Perhatian!",
+        text: `Tolong pilih rentang tanggal`,
+        icon: "info",
+        timer: 2000,
+        showConfirmButton: true,
+        });
+      return;
+    }
+
+    try {
+      await DownloadAllRoomRecapPDF(startDate, endDate);
+      Swal.fire({
+        title: "Berhasil!",
+        text: `file Room rekap PDF downloaded successfully`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
       });
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: `Error downloading file Tool rekap PDF`,
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+        });
     }
   };
 
@@ -333,6 +173,11 @@ const BookingToolList = () => {
     return filteredBookings;
   };
 
+  const handleTrackingClick = (booking) => {
+    setOpenModal(true);
+    setSelectedTracking(booking.tracking); // Set data booking yang akan ditampilkan
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData().slice(indexOfFirstItem, indexOfLastItem);
@@ -349,7 +194,7 @@ const BookingToolList = () => {
   return (
     <div>
       <div className="py-4">
-        <h1 className="text-2xl text-center font-bold">Booking Tool List</h1>
+        <h1 className="text-2xl text-center font-bold">Booking Room List</h1>
         <div className="flex gap-10 justify-end pt-4">
           <Datepicker
             value={value}
@@ -372,17 +217,18 @@ const BookingToolList = () => {
             }}
           />
 
-            <button 
-                onClick={() => handleDownloadExcel()}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Save Recap Tool Excel
-            </button>
-
-            <button 
-                onClick={() => handleDownloadPDF()}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Save Recap Tool PDF
-            </button>
+          <button
+            onClick={() => handleDownloadExcel()}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          >
+            Save Recap Excel
+          </button>
+          <button
+            onClick={() => handleDownloadPDF()}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          >
+            Save Recap PDF
+          </button>
         </div>
       </div>
 
@@ -420,166 +266,8 @@ const BookingToolList = () => {
                     <th scope="col" className="px-6 py-3">
                       Status
                     </th>
-                  </tr>
-                </thead>
-                {currentItems.length > 0 ? (
-                  <tbody>
-                    {currentItems.map((booking, index) => (
-                      <tr
-                        key={booking.id}
-                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                      >
-                        <td className="px-4 py-4">{index + 1}</td>
-                        <td
-                          scope="row"
-                          className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                        >
-                          {booking.peminjam}
-                        </td>
-                        <td className="px-4 py-4">{booking.tool_id}</td>
-                        <td className="px-4 py-4">
-                          {formatDateString(booking.booking_date)}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex">
-                            {formatTime(booking.start_time)} -{" "}
-                            {formatTime(booking.end_time)}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <button
-                            type="button"
-                            className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                            onClick={() => handleBookingClick(booking.id)}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                              </svg>
-                            </span>
-                            <span className="hidden md:inline-block">View</span>
-                          </button>
-                        </td>
-                        <td className="px-4 py-4 items-center justify-start">
-                          {booking.booking_status === "pending" ? (
-                            <CustomSelect
-                              booking={booking}
-                              handleChangeStatus={handleChangeStatus}
-                            />
-                          ) : (
-                            <span className="flex items-center justify-start ">
-                              {booking.booking_status === "approved" && (
-                                <>
-                                  <FaCheckCircle
-                                    className="mr-2"
-                                    style={{ color: "green" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Disetujui
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "rejected" && (
-                                <>
-                                  <FaTimesCircle
-                                    className="mr-2"
-                                    style={{ color: "red" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Ditolak
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "pending" && (
-                                <>
-                                  <FaHourglassHalf
-                                    className="mr-2"
-                                    style={{ color: "gray" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Pending
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "returned" && (
-                                <>
-                                  <FaCheckDouble
-                                    className="mr-2"
-                                    style={{ color: "blue" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Selesai
-                                  </div>
-                                </>
-                              )}
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                ) : (
-                  <tbody>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                      <td colSpan="7" className="text-center py-4 text-lg">
-                        No data available.
-                      </td>
-                    </tr>
-                  </tbody>
-                )}
-              </table>
-            </div>
-            <ComponentPagination
-              itemsPerPage={itemsPerPage}
-              totalItems={filteredData().length}
-              paginate={paginate}
-            />
-          </div>
-        </Tabs.Item>
-        <Tabs.Item active title="Approve" icon={FaCheckCircle}>
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
-            <div className="flex justify-center mb-4">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3"></th>
                     <th scope="col" className="px-6 py-3">
-                      Nama Peminjam
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Reservasi
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Tanggal
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Waktu
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Detail
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Status
+                      Tracking
                     </th>
                   </tr>
                 </thead>
@@ -589,176 +277,18 @@ const BookingToolList = () => {
                       <tr
                         key={booking.id}
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                        //onClick={() => handleBookingClick(booking.id)}
                       >
-                        <td className="px-4 py-4">{index + 1}</td>
+                        <td className="px-4 py-4">
+                          {indexOfFirstItem + index + 1}
+                        </td>
                         <td
                           scope="row"
                           className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
                           {booking.peminjam}
                         </td>
-                        <td className="px-4 py-4">{booking.tool_id}</td>
-                        <td className="px-4 py-4">
-                          {formatDateString(booking.booking_date)}
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex">
-                            {formatTime(booking.start_time)} -{" "}
-                            {formatTime(booking.end_time)}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <button
-                            type="button"
-                            className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                            onClick={() => handleBookingClick(booking.id)}
-                          >
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                              </svg>
-                            </span>
-                            <span className="hidden md:inline-block">View</span>
-                          </button>
-                        </td>
-                        <td className="px-4 py-4 items-center justify-start">
-                          {booking.booking_status === "pending" ? (
-                            <CustomSelect
-                              booking={booking}
-                              handleChangeStatus={handleChangeStatus}
-                            />
-                          ) : (
-                            <span className="flex items-center justify-start ">
-                              {booking.booking_status === "approved" && (
-                                <>
-                                  <FaCheckCircle
-                                    className="mr-2"
-                                    style={{ color: "green" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Disetujui
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "rejected" && (
-                                <>
-                                  <FaTimesCircle
-                                    className="mr-2"
-                                    style={{ color: "red" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Ditolak
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "pending" && (
-                                <>
-                                  <FaHourglassHalf
-                                    className="mr-2"
-                                    style={{ color: "gray" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Pending
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "returned" && (
-                                <>
-                                  <FaCheckDouble
-                                    className="mr-2"
-                                    style={{ color: "blue" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Selesai
-                                  </div>
-                                </>
-                              )}
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                ) : (
-                  <tbody>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                      <td colSpan="7" className="text-center py-4 text-lg">
-                        No data available.
-                      </td>
-                    </tr>
-                  </tbody>
-                )}
-              </table>
-            </div>
-            <ComponentPagination
-              itemsPerPage={itemsPerPage}
-              totalItems={filteredData().length}
-              paginate={paginate}
-            />
-          </div>
-        </Tabs.Item>
-        <Tabs.Item active title="Rejected" icon={FaTimesCircle}>
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
-            <div className="flex justify-center mb-4">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3"></th>
-                    <th scope="col" className="px-6 py-3">
-                      Nama Peminjam
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Reservasi
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Tanggal
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Waktu
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Detail
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                {currentItems.length > 0 ? (
-                  <tbody>
-                    {currentItems.map((booking, index) => (
-                      <tr
-                        key={booking.id}
-                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                      >
-                        <td className="px-4 py-4">{index + 1}</td>
-                        <td
-                          scope="row"
-                          className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                        >
-                          {booking.peminjam}
-                        </td>
-                        <td className="px-4 py-4">{booking.tool_id}</td>
+                        <td className="px-4 py-4">{booking.room_id}</td>
                         <td className="px-4 py-4">
                           {formatDateString(booking.booking_date)}
                         </td>
@@ -799,63 +329,39 @@ const BookingToolList = () => {
                           </button>
                         </td>
                         <td className="px-4 py-4 items-start justify-start">
-                          {booking.booking_status === "pending" ? (
-                            <CustomSelect
-                              booking={booking}
-                              handleChangeStatus={handleChangeStatus}
-                            />
-                          ) : (
-                            <span className="flex items-center justify-start ">
-                              {booking.booking_status === "approved" && (
-                                <>
-                                  <FaCheckCircle
-                                    className="mr-2"
-                                    style={{ color: "green" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Disetujui
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "rejected" && (
-                                <>
-                                  <FaTimesCircle
-                                    className="mr-2"
-                                    style={{ color: "red" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Ditolak
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "pending" && (
-                                <>
-                                  <FaHourglassHalf
-                                    className="mr-2"
-                                    style={{ color: "gray" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Pending
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "returned" && (
-                                <>
-                                  <FaCheckDouble
-                                    className="mr-2"
-                                    style={{ color: "blue" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Selesai
-                                  </div>
-                                </>
-                              )}
-                            </span>
-                          )}
+                          <span className="flex items-start justify-start">
+                            {booking.booking_status === "approved" && (
+                              <FaCheckCircle
+                                className="mr-2"
+                                style={{ color: "green" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "rejected" && (
+                              <FaTimesCircle
+                                className="mr-2"
+                                style={{ color: "red" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "returned" && (
+                              <FaCheckDouble
+                                className="mr-2"
+                                style={{ color: "blue" }}
+                                size={20}
+                              />
+                            )}
+
+                            {booking.booking_status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() => handleTrackingClick(booking)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                          >
+                            Tracking
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -863,7 +369,293 @@ const BookingToolList = () => {
                 ) : (
                   <tbody>
                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                      <td colSpan="7" className="text-center py-4 text-lg">
+                      <td colSpan="8" className="text-center py-4 text-lg">
+                        No data available.
+                      </td>
+                    </tr>
+                  </tbody>
+                )}
+              </table>
+            </div>
+            <ComponentPagination
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredData().length}
+              paginate={paginate}
+            />
+          </div>
+        </Tabs.Item>
+        <Tabs.Item active title="Approve" icon={FaCheckCircle}>
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+            <div className="flex justify-center mb-4">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3"></th>
+                    <th scope="col" className="px-6 py-3">
+                      Nama Peminjam
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Reservasi
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Tanggal
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Waktu
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Detail
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Tracking
+                    </th>
+                  </tr>
+                </thead>
+                {currentItems.length > 0 ? (
+                  <tbody>
+                    {currentItems.map((booking, index) => (
+                      <tr
+                        key={booking.id}
+                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                        //onClick={() => handleBookingClick(booking.id)}
+                      >
+                        <td className="px-4 py-4">
+                          {indexOfFirstItem + index + 1}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        >
+                          {booking.peminjam}
+                        </td>
+                        <td className="px-4 py-4">{booking.room_id}</td>
+                        <td className="px-4 py-4">
+                          {formatDateString(booking.booking_date)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex">
+                            {formatTime(booking.start_time)} -{" "}
+                            {formatTime(booking.end_time)}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            type="button"
+                            className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                            onClick={() => handleBookingClick(booking.id)}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                            </span>
+                            <span className="hidden md:inline-block">View</span>
+                          </button>
+                        </td>
+                        <td className="px-4 py-4 items-start justify-start">
+                          <span className="flex items-start justify-start">
+                            {booking.booking_status === "approved" && (
+                              <FaCheckCircle
+                                className="mr-2"
+                                style={{ color: "green" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "rejected" && (
+                              <FaTimesCircle
+                                className="mr-2"
+                                style={{ color: "red" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "returned" && (
+                              <FaCheckDouble
+                                className="mr-2"
+                                style={{ color: "blue" }}
+                                size={20}
+                              />
+                            )}
+
+                            {booking.booking_status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() => handleTrackingClick(booking)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                          >
+                            Tracking
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                      <td colSpan="8" className="text-center py-4 text-lg">
+                        No data available.
+                      </td>
+                    </tr>
+                  </tbody>
+                )}
+              </table>
+            </div>
+            <ComponentPagination
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredData().length}
+              paginate={paginate}
+            />
+          </div>
+        </Tabs.Item>
+        <Tabs.Item active title="Rejected" icon={FaTimesCircle}>
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+            <div className="flex justify-center mb-4">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3"></th>
+                    <th scope="col" className="px-6 py-3">
+                      Nama Peminjam
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Reservasi
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Tanggal
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Waktu
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Detail
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Tracking
+                    </th>
+                  </tr>
+                </thead>
+                {currentItems.length > 0 ? (
+                  <tbody>
+                    {currentItems.map((booking, index) => (
+                      <tr
+                        key={booking.id}
+                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                        //onClick={() => handleBookingClick(booking.id)}
+                      >
+                        <td className="px-4 py-4">
+                          {indexOfFirstItem + index + 1}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        >
+                          {booking.peminjam}
+                        </td>
+                        <td className="px-4 py-4">{booking.room_id}</td>
+                        <td className="px-4 py-4">
+                          {formatDateString(booking.booking_date)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex">
+                            {formatTime(booking.start_time)} -{" "}
+                            {formatTime(booking.end_time)}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            type="button"
+                            className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                            onClick={() => handleBookingClick(booking.id)}
+                          >
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                            </span>
+                            <span className="hidden md:inline-block">View</span>
+                          </button>
+                        </td>
+                        <td className="px-4 py-4 items-start justify-start">
+                          <span className="flex items-start justify-start">
+                            {booking.booking_status === "approved" && (
+                              <FaCheckCircle
+                                className="mr-2"
+                                style={{ color: "green" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "rejected" && (
+                              <FaTimesCircle
+                                className="mr-2"
+                                style={{ color: "red" }}
+                                size={20}
+                              />
+                            )}
+                            {booking.booking_status === "returned" && (
+                              <FaCheckDouble
+                                className="mr-2"
+                                style={{ color: "blue" }}
+                                size={20}
+                              />
+                            )}
+
+                            {booking.booking_status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() => handleTrackingClick(booking)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                          >
+                            Tracking
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                      <td colSpan="8" className="text-center py-4 text-lg">
                         No data available.
                       </td>
                     </tr>
@@ -903,6 +695,9 @@ const BookingToolList = () => {
                     <th scope="col" className="px-6 py-3">
                       Status
                     </th>
+                    <th scope="col" className="px-6 py-3">
+                      Tracking
+                    </th>
                   </tr>
                 </thead>
                 {currentItems.length > 0 ? (
@@ -919,7 +714,7 @@ const BookingToolList = () => {
                         >
                           {booking.peminjam}
                         </td>
-                        <td className="px-4 py-4">{booking.tool_id}</td>
+                        <td className="px-4 py-4">{booking.room_id}</td>
                         <td className="px-4 py-4">
                           {formatDateString(booking.booking_date)}
                         </td>
@@ -960,63 +755,64 @@ const BookingToolList = () => {
                           </button>
                         </td>
                         <td className="px-4 py-4">
-                          {booking.booking_status === "pending" ? (
-                            <CustomSelect
-                              booking={booking}
-                              handleChangeStatus={handleChangeStatus}
-                            />
-                          ) : (
-                            <span className="flex items-center justify-start ">
-                              {booking.booking_status === "approved" && (
-                                <>
-                                  <FaCheckCircle
-                                    className="mr-2"
-                                    style={{ color: "green" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Disetujui
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "rejected" && (
-                                <>
-                                  <FaTimesCircle
-                                    className="mr-2"
-                                    style={{ color: "red" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Ditolak
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "pending" && (
-                                <>
-                                  <FaHourglassHalf
-                                    className="mr-2"
-                                    style={{ color: "gray" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Pending
-                                  </div>
-                                </>
-                              )}
-                              {booking.booking_status === "returned" && (
-                                <>
-                                  <FaCheckDouble
-                                    className="mr-2"
-                                    style={{ color: "blue" }}
-                                    size={12}
-                                  />
-                                  <div className="text-sm font-semibold text-gray-800">
-                                    Selesai
-                                  </div>
-                                </>
-                              )}
-                            </span>
-                          )}
+                          <span className="flex items-center justify-start ">
+                            {booking.booking_status === "approved" && (
+                              <>
+                                <FaCheckCircle
+                                  className="mr-2"
+                                  style={{ color: "green" }}
+                                  size={12}
+                                />
+                                <div className="text-sm font-semibold text-gray-800">
+                                  Disetujui
+                                </div>
+                              </>
+                            )}
+                            {booking.booking_status === "rejected" && (
+                              <>
+                                <FaTimesCircle
+                                  className="mr-2"
+                                  style={{ color: "red" }}
+                                  size={12}
+                                />
+                                <div className="text-sm font-semibold text-gray-800">
+                                  Ditolak
+                                </div>
+                              </>
+                            )}
+                            {booking.booking_status === "pending" && (
+                              <>
+                                <FaHourglassHalf
+                                  className="mr-2"
+                                  style={{ color: "gray" }}
+                                  size={12}
+                                />
+                                <div className="text-sm font-semibold text-gray-800">
+                                  Pending
+                                </div>
+                              </>
+                            )}
+                            {booking.booking_status === "returned" && (
+                              <>
+                                <FaCheckDouble
+                                  className="mr-2"
+                                  style={{ color: "blue" }}
+                                  size={12}
+                                />
+                                <div className="text-sm font-semibold text-gray-800">
+                                  Selesai
+                                </div>
+                              </>
+                            )}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() => handleTrackingClick(booking)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                          >
+                            Tracking
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -1024,7 +820,7 @@ const BookingToolList = () => {
                 ) : (
                   <tbody>
                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                      <td colSpan="7" className="text-center py-4 text-lg">
+                      <td colSpan="8" className="text-center py-4 text-lg">
                         No data available.
                       </td>
                     </tr>
@@ -1050,8 +846,44 @@ const BookingToolList = () => {
           />
         </div>
       )}
+
+      <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal.Header>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Tracking Verifikasi
+          </h3>
+        </Modal.Header>
+        <Modal.Body>
+          <ol className="list-disc list-inside">
+            {selectedTracking &&
+              selectedTracking.map((track, index) => (
+                <li key={index}>{track}</li>
+              ))}
+          </ol>
+        </Modal.Body>
+      </Modal>
+
+      {/* {selectedTracking && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-4 rounded shadow-lg w-1/2">
+                    <h2 className="text-xl font-bold mb-4">Tracking Verifikasi</h2>
+                    <ol className="list-disc list-inside">
+                        {selectedTracking &&
+                        selectedTracking.map((track, index) => (
+                        <li key={index}>{track}</li>
+                        ))}
+                    </ol>
+                    <button
+                    onClick={closeTracking}
+                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                    >
+                    Tutup
+                    </button>
+                </div>
+                </div>
+            )} */}
     </div>
   );
 };
 
-export default BookingToolList;
+export default TrackTableBooking;

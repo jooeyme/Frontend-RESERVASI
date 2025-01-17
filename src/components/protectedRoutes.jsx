@@ -1,6 +1,10 @@
-import { useEffect,useState } from "react";
+
+import React, { createContext, useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import Swal from "sweetalert2";
+
+const AuthContext = createContext();
 
 export default function PrivateRoute({
   children,
@@ -9,46 +13,47 @@ export default function PrivateRoute({
   const navigate = useNavigate();
   const[isAuthenticated, setIsAuthenticated] = useState(false)
   const [role, setRole] = useState(null);  
-  const [decoded, setDecoded] = useState(null)
 
   useEffect(() =>{
       const token = localStorage.getItem('token');
+      if (!token) {
+        // Jika token tidak ada di localStorage
+        Swal.fire({
+          icon: 'warning',
+          title: 'Anda harus Login!',
+          text: 'Anda akan diarahkan ke halaman login.',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          navigate('/admin'); // Arahkan ke halaman login
+        });
+        return;
+      }
 
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
           const isExpired = Date.now() > decodedToken.exp * 1000;
-          console.log("token type:",decodedToken.type);
-          setDecoded(decodedToken)
         if (isExpired) {
-          logout(decoded); // Token expired, log out
+          setIsAuthenticated(false);
+          setRole(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');; // Token expired, log out
           return;
         }
         setRole(decodedToken.role);
         setIsAuthenticated(true);
         } catch (error) {
           console.error('Invalid token:', error);
-          logout(decoded); // Invalid token, log out
+          setIsAuthenticated(false);
+          setRole(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');; // Invalid token, log out
         }
-        
       }
       
     }, []);
-    const logout = (decodedToken) => {
-      if (decodedToken.type === 'user') {
-        setIsAuthenticated(false);
-        setRole(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        navigate('/');
-      } else {
-        setIsAuthenticated(false);
-        setRole(null);
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        navigate('/admin');
-      }
-    };
+
+    
 
     if (!isAuthenticated) {
       return <h1>Not Authenticated</h1>; // Display message when not authenticated
@@ -61,6 +66,11 @@ export default function PrivateRoute({
 
 
 
-    return children;
+    return (
+      <AuthContext.Provider value={role}>
+          {children}
+      </AuthContext.Provider>
+    ) 
+    
 }
  

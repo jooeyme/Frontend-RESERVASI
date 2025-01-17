@@ -16,14 +16,12 @@ const ToolsforEdit= () => {
     const fetchData = async () => {
       try {
         const response = await findAllTool();
-        console.log('Response:', response.data );
         setTools(response.data);
         
       } catch (error) {
         console.error('Error Tools data:', error);
       }
     };
-
     fetchData();
   }, []);
 

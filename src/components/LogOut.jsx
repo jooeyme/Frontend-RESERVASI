@@ -7,6 +7,12 @@ const Logout = () => {
 
   const handleLogout = () => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      // Jika token tidak ada di localStorage
+      alert('Token tidak ditemukan, Anda akan diarahkan ke halaman login.');
+      navigate('/login');
+      return;
+    }
     const decodedToken = jwtDecode(token);
     if (decodedToken.type === 'user') {
         localStorage.removeItem('token');
@@ -20,7 +26,11 @@ const Logout = () => {
   };
 
   return (
-    <button onClick={handleLogout}>Logout</button>
+    <button 
+    onClick={handleLogout} 
+    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+    >
+      Logout</button>
   );
 };
 

@@ -17,11 +17,10 @@ const AdminLoginPage = () => {
       const response = await LoginAdmin({ email_admn, password });
       const { token, role } = response;
       localStorage.setItem('token', token);
-      console.log('User role:', role);
       navigate('/home-admin')
     } catch (error) {
       // Handle login error
-      setError('Invalid email_admn or password');
+      setError('Invalid email or password');
       console.error('Login error:', error.message
       );
     }

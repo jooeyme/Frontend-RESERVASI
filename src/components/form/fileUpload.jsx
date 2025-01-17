@@ -10,7 +10,6 @@ const FileUpload = ({ onUpload }) => {
     };
 
     const handleUpload = async () => {
-        console.log("pdf:", pdf)
         if (!pdf) {
             setError('Please select a file before uploading.');
             return;
@@ -21,7 +20,6 @@ const FileUpload = ({ onUpload }) => {
 
         try {
             const response = await fileUpload(formData);
-            console.log(response)
             onUpload(response);
         } catch (error) {
             console.error('Error uploading file:', error);

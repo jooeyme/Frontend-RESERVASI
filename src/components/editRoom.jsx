@@ -19,6 +19,8 @@ const EditFormRoom = () => {
       deskripsi_room: '',
       fasilitas: '',
       gambar_room: null,
+      require_double_verification: false,
+      type: ''
     
     });
 
@@ -31,7 +33,6 @@ const EditFormRoom = () => {
 
     const handleFileChange = (e) => {
       setFormData({ ...formData, gambar_room: e.target.files[0] });
-      console.log("gambar1:", formData.gambar_room)
         setSelectedFile( {gambar_room: e.target.files[0]});
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -47,10 +48,8 @@ const EditFormRoom = () => {
         formdata.append('gambar_room', selectedFile);
 
         try {
-            const response = await editRoom(id, formData);
-            console.log(response.data);
+            await editRoom(id, formData);
             
-            console.log('Room successfully Edit');
             toast.success('Room successfully Edit', {
                 position: 'top-center',
                 hideProgressBar: true,
@@ -68,7 +67,6 @@ const EditFormRoom = () => {
                 hideProgressBar: true,
                 autoClose: 5000
             });
-
         }
       };
     
@@ -77,7 +75,6 @@ const EditFormRoom = () => {
             try {
                 const response = await showRoomById(id);
                 const roomData = response.data;
-                console.log(roomData);
 
                 setFormData({
                     room_id: roomData.room_id,
@@ -88,6 +85,8 @@ const EditFormRoom = () => {
                     deskripsi_room: roomData.deskripsi_room,
                     fasilitas: roomData.fasilitas,
                     gambar_room: roomData.gambar_room,
+                    require_double_verification: roomData.require_double_verification,
+                    type: roomData.type
                 })
                 if (roomData.gambar_room) {
                   setExistingImageURL(roomData.gambar_room); // Set existing image URL
@@ -245,8 +244,38 @@ const EditFormRoom = () => {
                 
               ></textarea>
             </div>
+            <div className="flex mb-4 gap-5">
+              <label htmlFor="require_double_verification" className="block text-left text-sm font-semibold font-poppins">
+                Double Verification?
+              </label>
+              <input
+                type="checkbox"
+                id="require_double_verification"
+                name="require_double_verification"
+                onChange={handleChange}
+                value={formData.require_double_verification}
+                className="flex p-2.5 border border-gray-300 rounded-md align-end "
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="type" className="block text-left text-sm font-semibold font-poppins">
+                Type alat
+              </label>
+              <select  
+                name="type" 
+                id="type" 
+                value={formData.type}  
+                onChange={handleChange} 
+                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                required 
+                >
+                    <option value="class">Ruang Kelas</option>
+                    <option value="lab">Ruang Laboratorium</option>
+                    <option value="meeting">Ruang Meeting</option>
+                </select>
             </div>
 
+            </div>
             </div>
     
             <div className="flex flex-row-reverse space-x-3 space-x-reverse">

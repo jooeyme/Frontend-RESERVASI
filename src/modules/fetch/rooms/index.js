@@ -31,6 +31,15 @@ async function findAllRoom() {
   }
 }
 
+async function findAllRoomsId() {
+  try {
+    const response = await instance.get('/room/roomId');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || "Something went wrong");
+  }
+}
+
 async function showRoomById(id) {
   try {
     const response = await instance.get(`/room/${id}`);
@@ -51,4 +60,4 @@ async function editRoom(id, formData) {
   }
 }
 
-export { createRoom, findAllRoom, showRoomById, editRoom, deleteRoom};
+export { findAllRoomsId, createRoom, findAllRoom, showRoomById, editRoom, deleteRoom};

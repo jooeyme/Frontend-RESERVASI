@@ -16,7 +16,6 @@ const UserLogin = () => {
       const response = await loginUser({ email, password });
       const {token, role, id} = response;
       localStorage.setItem('token', token);
-      console.log('User role:', role);
       navigate('/home-user')
     } catch (error) {
       // Handle login error

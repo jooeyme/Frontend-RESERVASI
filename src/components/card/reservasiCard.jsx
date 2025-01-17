@@ -6,7 +6,9 @@ import {
   FaRegUser,
   FaRegClock,
   FaRegCalendarAlt,
-  FaSpinner,
+  FaBoxOpen,
+  FaRegThumbsUp,
+  FaPhoneAlt
 } from "react-icons/fa";
 import  id  from 'date-fns/locale/id';
 
@@ -30,6 +32,9 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
     end_time,
     booking_status,
     desk_activity,
+    quantity,
+    jenis_kegiatan,
+    jenis_pengguna,
     dept,
     Room,
     Tool,
@@ -99,13 +104,24 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
 
             <div className="flex items-center mb-2">
               <FaRegUser />
-              <span className="font-medium text-gray-600 dark:text-gray-300 ml-2 mr-2">
+              <span className="font-medium text-gray-600 dark:text-gray-300 ml-2">
                 {peminjam}
               </span>
-              <span className="text-gray-600 dark:text-gray-300">
+            </div>
+            <div className="flex items-center mb-2">
+            <FaPhoneAlt />
+              <span className="text-gray-600 dark:text-gray-300 ml-2">
                 {kontak}
               </span>
             </div>
+            {!room_id && (
+              <div className="flex items-center mb-2">
+              <FaBoxOpen />
+                <span className="text-gray-600 dark:text-gray-300 ml-2">
+                {quantity} alat
+              </span>
+              </div>
+              )}
 
             <div className="flex items-center mb-2">
               <FaRegCalendarAlt />
@@ -122,7 +138,7 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
             </div>
           
           <div className="flex items-center mb-2">
-            <FaSpinner />
+            <FaRegThumbsUp />
             <span className="text-gray-600 dark:text-gray-300 ml-2">
               {booking_status}
             </span>
@@ -135,6 +151,14 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
         <span className="flex items-start font-semibold text-gray-700 dark:text-gray-300">
           {dept}
         </span>
+        <div className="flex gap-4">
+          <span>
+            {jenis_kegiatan}
+          </span>
+          <span>
+            {jenis_pengguna}
+          </span>
+        </div>
         <p className="flex text-left text-gray-600 dark:text-gray-300 text-sm">
           {desk_activity} 
         </p>

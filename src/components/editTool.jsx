@@ -18,7 +18,8 @@ const EditFormTool = () => {
       jumlah: '',
       deskripsi: '',
       gambar_tool: null,
-    
+      require_double_verification: false,
+      type: ''
     });
 
     const handleChange = (e) => {
@@ -30,7 +31,6 @@ const EditFormTool = () => {
 
     const handleFileChange = (e) => {
       setFormData({ ...formData, gambar_tool: e.target.files[0] });
-      console.log("gambar1:", formData.gambar_tool)
         setSelectedFile( {gambar_tool: e.target.files[0]});
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -47,10 +47,7 @@ const EditFormTool = () => {
         formdata.append('gambar_tool', selectedFile);
 
         try {
-            const response = await editTool(id, formData);
-            console.log(response.data);
-            
-            console.log('Tool successfully Edit');
+            await editTool(id, formData);
             toast.success('Tool successfully Edit', {
                 position: 'top-center',
                 hideProgressBar: true,
@@ -77,7 +74,6 @@ const EditFormTool = () => {
             try {
                 const response = await showToolById(id);
                 const toolData = response.data;
-                console.log(toolData);
 
                 setFormData({
                     tool_id: toolData.tool_id,
@@ -87,6 +83,8 @@ const EditFormTool = () => {
                     jumlah: toolData.jumlah,
                     deskripsi: toolData.deskripsi,
                     gambar_tool: toolData.gambar_tool,
+                    require_double_verification: toolData.require_double_verification,
+                    type: toolData.type
                 })
                 if (toolData.gambar_tool) {
                   setExistingImageURL(toolData.gambar_tool); // Set existing image URL
@@ -224,9 +222,42 @@ const EditFormTool = () => {
                 name="deskripsi"
                 onChange={handleChange}
                 value={formData.deskripsi}
-                className="mt-1 p-2 border border-gray-300 rounded-md w-full min-h-5"
-                
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full min-h-5"            
               ></textarea>
+            </div>
+
+            <div className="flex mb-4 gap-5">
+              <label htmlFor="require_double_verification" className="block text-left text-sm font-semibold font-poppins">
+                Double Verification
+              </label>
+              <input
+                type="checkbox"
+                id="require_double_verification"
+                name="require_double_verification"
+                onChange={handleChange}
+                value={formData.require_double_verification}
+                className="p-2.5 border border-gray-300 rounded-md"
+              />
+              <label className="block text-left text-sm font-semibold font-poppins">
+                Iya
+              </label>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="type" className="block text-left text-sm font-semibold font-poppins">
+                type alat
+              </label>
+              <select  
+                name="type" 
+                id="type" 
+                value={formData.type}  
+                onChange={handleChange} 
+                className="mt-1 p-2 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                required 
+                >
+                    <option value="lab">Alat Laboratorium</option>
+                    <option value="multimedia">Alat Multimedia</option>
+                    
+                </select>
             </div>
 
             

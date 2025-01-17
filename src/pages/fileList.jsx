@@ -9,7 +9,6 @@ const ListFile = () => {
     const fetchFiles = async () => {
         try {
             const response = await getFile();
-            console.log(response);
             setFiles(response);
         } catch (error) {
             console.error('Error fetching files:', error);

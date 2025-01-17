@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { findAllRoom, deleteRoom } from '../modules/fetch/rooms';
 import RoomEditCard from '../components/card/EditRoomCard';
 import MainLayoutAdmin from './MainLayoutAdmin';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 
@@ -15,11 +14,10 @@ const RoomsforEdit= () => {
     const fetchData = async () => {
       try {
         const response = await findAllRoom();
-        console.log('Response:', response.data );
         setRooms(response.data);
         
       } catch (error) {
-        console.error('Error rooms data:', error);
+        console.error('Error rooms data:', error.message);
       }
     };
 
@@ -39,10 +37,22 @@ const RoomsforEdit= () => {
         try {
             await deleteRoom(id);
             setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
-            toast('Data Ruangan berhasil dihapus.', { type: 'success' });
+            Swal.fire({
+              title: "Berhasil!",
+              text: `Data Ruangan berhasil dihapus`,
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
         } catch (error) {
             console.error("Error deleting Room:", error.message);
-            toast('Gagal menghapus Ruangan. Silahkan coba lagi.', { type: 'error' });
+            Swal.fire({
+              title: "Error!",
+              text: `Gagal menghapus Ruangan. Silahkan coba lagi`,
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+            });
         } 
       }
     })
@@ -79,7 +89,6 @@ const RoomsforEdit= () => {
     </div>
     </div>
     </MainLayoutAdmin>
-    <ToastContainer />
     </>
   );
 };

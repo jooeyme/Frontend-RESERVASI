@@ -24,7 +24,6 @@ const DetailTool = () => {
 
     const handleSelectRoom = () => {
         setSelectedToolId(detail.tool_id);
-
       };
 
     const handleReserveNow = () => {
@@ -34,10 +33,8 @@ const DetailTool = () => {
     const handleClick  = () => {
         handleReserveNow();
         setIsOpen(true)
-        console.log(detail.tool_id);
         if (detail.tool_id) {
             handleSelectRoom(detail.tool_id);
-            console.log(selectedToolId);
         } else {
             console.error("Tool ID is not defined");
         }
@@ -51,17 +48,12 @@ const DetailTool = () => {
                 const tool_id = detailToolData.tool_id;
                 if(tool_id !== null && tool_id !== undefined) {
                     const bookings = await getBookingByToolId(tool_id)
-                    console.log("datatool:", bookings.data)
                     const Booking = bookings.data
                     setBooking(Booking);
                 } else {
                     return response.status(404).json({ message: `tool_id: ${tool_id} null?`});
                 }
-                console.log("bookingbyToolId:", booking);
                 setDetail(detailToolData);
-                console.log("detail:",detail)
-                
-            
         } catch (e) {
             console.log("Error fetching detail Room", e);
         };
@@ -70,22 +62,20 @@ const DetailTool = () => {
     }, [selectedToolId]);
 
     const token = localStorage.getItem('token');
-          console.log(token);
-    
-          const handleShowAlert = () => {
-            Swal.fire({
-                title: 'Anda Belum Login!',
-                text: 'Silakan login untuk mengakses halaman reservasi.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Tidak'
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  navigate('/login')
-                }
-              });
-              };
+    const handleShowAlert = () => {
+        Swal.fire({
+            title: 'Anda Belum Login!',
+            text: 'Silakan login untuk mengakses halaman reservasi.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate('/login')
+            }
+        });
+        };
 
     return (
         <>
@@ -145,7 +135,7 @@ const DetailTool = () => {
                     </div>    
                 </div>
                 {showForm && isOpen && 
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50 z-50 pt-20 overflow-auto">
+                <div className="fixed top-0 left-0 w-full h-full flex justify-center bg-gray-900 bg-opacity-50 z-50 py-10 overflow-auto">
                     <ReservationToolCard 
                     ToolId={selectedToolId}
                     isOpen={isOpen} 

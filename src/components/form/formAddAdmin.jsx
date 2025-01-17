@@ -8,6 +8,9 @@ const Role = {
     SP: "super_admin", 
     AD: "admin", 
     AS: "admin_staff",
+    AL: "admin_leader",
+    AT: "admin_tu",
+    AM: "admin_mm"
 }
 
 
@@ -151,7 +154,10 @@ const TambahAdmin = ({isOpen, handleCloseClick}) => {
                                 >
                                     <option value={Role.SP}>Super Admin</option>
                                     <option value={Role.AD}>Admin Room</option>
-                                    <option value={Role.AS}>Admin Tool</option>
+                                    <option value={Role.AS}>Admin Laboratorium</option>
+                                    <option value={Role.AT}>Admin TU</option>
+                                    <option value={Role.AM}>Admin Multimedia</option>
+                                    <option value={Role.AL}>Admin Leader</option>
                                 </select>
                         </div>
                         <button 
