@@ -68,7 +68,7 @@ const RegisterUser = () => {
                             <label 
                                 htmlFor="NIM" 
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                NIM
+                                NIM/NIP/NIK
                             </label>
                             <input 
                                 type="text" 

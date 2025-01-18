@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Set up Axios instance
 // production || develop
-const baseURL = import.meta.evn.baseURL;
+const baseURL = import.meta.env.VITE_API_URL;
 
 
 const instance = axios.create({ baseURL });
