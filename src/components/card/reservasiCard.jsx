@@ -11,6 +11,7 @@ import {
   FaPhoneAlt
 } from "react-icons/fa";
 import  id  from 'date-fns/locale/id';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const locale = id;
 
@@ -92,7 +93,7 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
             <div className="rounded-md bg-gray-300 dark:bg-gray-700 mb-4">
               <img
                 className="h-48 w-full rounded-lg object-cover"
-                src={`http://localhost:3000/images/${imageSource}`}
+                src={`${BASE_URL}/images/${imageSource}`}
                 alt={nameReserve}
               />
             </div>

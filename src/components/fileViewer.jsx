@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 Modal.setAppElement('#root');
 
 const FileViewer = ({ file, isOpen, onClose  }) => {
@@ -37,7 +37,7 @@ const FileViewer = ({ file, isOpen, onClose  }) => {
             </button>
             <div style={{ height: '600px' }}>
                 <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
-                    <Viewer fileUrl= {`http://localhost:3000/${file}`} />
+                    <Viewer fileUrl= {`${BASE_URL}/${file}`} />
                 </Worker>
             </div>
         </Modal>

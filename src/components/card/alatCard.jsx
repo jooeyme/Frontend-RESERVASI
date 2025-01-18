@@ -1,6 +1,7 @@
 // components/RoomCard.jsx
 import React from 'react';
 import {Link} from "react-router-dom";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ToolCard = ({alat, id, tool_id,name_tool, deskripsi,jumlah, gambar_tool, showDetails}) => {
     
@@ -8,7 +9,7 @@ const ToolCard = ({alat, id, tool_id,name_tool, deskripsi,jumlah, gambar_tool, s
 
         <div className="bg-white overflow-hidden shadow-md rounded-md">
             
-                <img className="h-40 w-full object-cover rounded-t-lg" src={`http://localhost:3000/images/${gambar_tool}`} alt={`Tool Image`} />
+                <img className="h-40 w-full object-cover rounded-t-lg" src={`${BASE_URL}/images/${gambar_tool}`} alt={`Tool Image`} />
             
             <div className="px-4 py-4">
             <h3 className="text-left text-sm font-bold text-gray-700 dark:text-gray-300">{tool_id}</h3>

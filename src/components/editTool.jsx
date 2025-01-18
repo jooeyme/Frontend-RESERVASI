@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { editTool, showToolById } from '../modules/fetch/alat';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const EditFormTool = () => {
     const {id} = useParams();
@@ -187,7 +188,7 @@ const EditFormTool = () => {
               </label>
               {existingImageURL && (
               <div className="existing-image">
-                <img src={`http://localhost:3000/images/${existingImageURL}`} alt="Existing Image" />
+                <img src={`${BASE_URL}/images/${existingImageURL}`} alt="Existing Image" />
               </div>
               )}
 

@@ -7,7 +7,7 @@ import CalenderBooking from "../components/calenderBooking";
 import MainLayoutUser from "./MainLayoutUser";
 import Swal from 'sweetalert2';
 import { ChevronLeftIcon } from '@heroicons/react/solid'
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const DetailTool = () => {
     const {id} = useParams();
@@ -98,7 +98,7 @@ const DetailTool = () => {
             <div className="flex flex-col md:flex-row -mx-4">
                 <div className="md:flex-1 px-4">
                     <div className="rounded-lg bg-gray-300 dark:bg-gray-700 ">
-                        <img className="h-72 w-full rounded-lg object-cover" src={`http://localhost:3000/images/${detail.gambar_tool}`} alt={detail.name_tool}/>
+                        <img className="h-72 w-full rounded-lg object-cover" src={`${BASE_URL}/images/${detail.gambar_tool}`} alt={detail.name_tool}/>
                     </div>
                 </div>
                 <div className="md:flex-1 px-2">

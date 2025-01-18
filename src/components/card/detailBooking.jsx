@@ -17,6 +17,7 @@ import { turnInRoom, turnInTool } from "../../modules/fetch/reservasi";
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
 import Swal from "sweetalert2";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const locale = id;
 const MyBooking = ({
@@ -114,7 +115,7 @@ const MyBooking = ({
     <div className="flex flex-row md:flex-row space-y-3 md:space-y-0 rounded-xl shadow-lg p-3 max-w-xl border border-white bg-white">
       <div className="flex">
         <img
-          src={`http://localhost:3000/images/${imageSource}`}
+          src={`${BASE_URL}/images/${imageSource}`}
           alt="gambar"
           className="mb-6 sm:mb-4 shadow-md rounded-lg bg-slate-50 w-md h-40 sm:w-90 md:w-60 lg:w-80"
         />

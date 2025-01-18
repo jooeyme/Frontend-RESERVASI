@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { editRoom, showRoomById } from '../modules/fetch/rooms/index';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const EditFormRoom = () => {
     const {id} = useParams();
@@ -189,7 +190,7 @@ const EditFormRoom = () => {
               </label>
               {existingImageURL && (
               <div className="existing-image">
-                <img src={`http://localhost:3000/images/${existingImageURL}`} alt="Existing Image" />
+                <img src={`${BASE_URL}/images/${existingImageURL}`} alt="Existing Image" />
               </div>
               )}
 

@@ -6,7 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import FileViewer from '../fileViewer';
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const FileList = ({ files, role }) => {
     const [Files, setFiles] = useState(files)
@@ -102,7 +102,7 @@ const FileList = ({ files, role }) => {
                                             {file.User.dept}
                                         </td>
                                         <td className="py-3 px-4">
-                                            <a href={`http://localhost:3000${file.path}`} target="_blank" rel="noopener noreferrer">
+                                            <a href={`${BASE_URL}:3000${file.path}`} target="_blank" rel="noopener noreferrer">
                                                 {file.nama}
                                             </a>
                                         </td>

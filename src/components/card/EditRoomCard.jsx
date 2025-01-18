@@ -2,6 +2,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import { FaRegTrashAlt, FaRegEdit } from "react-icons/fa";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const RoomEditCard = ({room, id, room_id,name_room, deskripsi_room, gambar_room, onDelete}) => {
     const handleDeleteClick = () => {
@@ -12,7 +13,7 @@ const RoomEditCard = ({room, id, room_id,name_room, deskripsi_room, gambar_room,
 
         <div className="bg-white overflow-hidden shadow-md rounded-md">
             
-                <img className="h-40 w-full object-cover rounded-t-lg" src={`http://localhost:3000/images/${gambar_room}`} alt={`Room Image`} />
+                <img className="h-40 w-full object-cover rounded-t-lg" src={`${BASE_URL}/images/${gambar_room}`} alt={`Room Image`} />
             
             <div className="px-5 py-2">
                 <div className="flex justify-between items-center">

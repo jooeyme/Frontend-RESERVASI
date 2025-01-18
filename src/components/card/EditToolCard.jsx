@@ -2,6 +2,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import { FaRegTrashAlt, FaRegEdit } from "react-icons/fa";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ToolEditCard = ({ id, tool_id,name_tool, deskripsi, jumlah, gambar_tool, onDelete}) => {
     const handleDeleteClick = () => {
@@ -11,7 +12,7 @@ const ToolEditCard = ({ id, tool_id,name_tool, deskripsi, jumlah, gambar_tool, o
     return (
         <div className="bg-white overflow-hidden shadow-md rounded-md">
             
-                <img className="h-40 w-full object-cover rounded-t-lg" src={`http://localhost:3000/images/${gambar_tool}`} alt={`Tool Image`} />
+                <img className="h-40 w-full object-cover rounded-t-lg" src={`${BASE_URL}/images/${gambar_tool}`} alt={`Tool Image`} />
             
             <div className="px-5 py-2">
                 <div className="flex justify-between items-center">

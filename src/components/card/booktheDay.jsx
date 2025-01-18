@@ -1,7 +1,7 @@
 import React from "react";
 import { format, parse, parseISO } from 'date-fns';
 import { FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaAccessibleIcon, FaRegTrashAlt  } from 'react-icons/fa';
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const BookTheDay
  = ({
@@ -38,7 +38,7 @@ const BookTheDay
        
         <div className="flex flex-col justify-center">
             <div className="relative flex flex-col lg:flex-row space-y-3 md:space-y-0 rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
-            <img src={`http://localhost:3000/images/${imageSource}`} alt="gambar" 
+            <img src={`${BASE_URL}/images/${imageSource}`} alt="gambar" 
                 className="mb-6 shadow-md rounded-lg bg-slate-50 w-lg sm:w-[17rem] sm:mb-0" width="1216" height="640"/>
             <div className="w-full flex flex-col space-y-2 p-3">
                 <div className="flex items-center justify-between">
