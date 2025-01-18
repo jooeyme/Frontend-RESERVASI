@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Set up Axios instance
 // production || develop
-const baseURL = import.meta.evn.baseURL || "http://localhost:3000/api";
+const baseURL = import.meta.evn.baseURL;
 
 
 const instance = axios.create({ baseURL });
