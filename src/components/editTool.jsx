@@ -24,11 +24,14 @@ const EditFormTool = () => {
     });
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
+      const { name, type, checked, value } = e.target;
+
+      const inputValue = type === "checkbox" ? checked : value;
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: inputValue, // Update properti berdasarkan nama input
+      }));  
+    }
 
     const handleFileChange = (e) => {
       setFormData({ ...formData, gambar_tool: e.target.files[0] });

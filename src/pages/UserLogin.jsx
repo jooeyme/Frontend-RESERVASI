@@ -17,7 +17,7 @@ const UserLogin = () => {
       const response = await loginUser({ email, password });
       const {token, role, id} = response;
       localStorage.setItem('token', token);
-      navigate('/home-user')
+      navigate('/')
     } catch (error) {
       // Handle login error
       setError('Invalid email or password');

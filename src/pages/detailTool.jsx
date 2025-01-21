@@ -107,6 +107,10 @@ const DetailTool = () => {
                         {detail.deskripsi}
                     </p>
                     <div className="flex mb-2">    
+                            <span className="flex items-start font-semibold text-gray-900 dark:text-gray-300">Tipe ALat:</span>
+                            <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.type}</span>
+                    </div>
+                    <div className="flex mb-2">    
                             <span className="flex items-start font-semibold text-gray-900 dark:text-gray-300">Kondisi:</span>
                             <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.kondisi}</span>
                     </div>

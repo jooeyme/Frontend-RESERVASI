@@ -26,10 +26,13 @@ const EditFormRoom = () => {
     });
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+      const { name, type, checked, value } = e.target;
+
+      const inputValue = type === "checkbox" ? checked : value;
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: inputValue, // Update properti berdasarkan nama input
+      }));  
     };
 
     const handleFileChange = (e) => {
@@ -254,7 +257,7 @@ const EditFormRoom = () => {
                 id="require_double_verification"
                 name="require_double_verification"
                 onChange={handleChange}
-                checked={formData.require_double_verification}
+                checked={formData.require_double_verification ? true : false}
                 className="flex p-2.5 border border-gray-300 rounded-md align-end "
               />
             </div>

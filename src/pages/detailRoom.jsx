@@ -110,6 +110,10 @@ const DetailRoom = () => {
                         {detail.deskripsi_room}
                     </p>
                     <div className="flex mb-2">
+                    <div className="mr-4">
+                            <span className="items-start font-semibold text-gray-900 dark:text-gray-300">Tipe ruangan:</span>
+                            <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.type}</span>
+                        </div>
                         <div className="mr-4">
                             <span className="items-start font-semibold text-gray-900 dark:text-gray-300">Luas:</span>
                             <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.luas}</span>
