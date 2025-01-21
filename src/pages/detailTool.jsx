@@ -91,17 +91,17 @@ const DetailTool = () => {
                     <ChevronLeftIcon className="w-8 h-8" aria-hidden="true" />
                 </button>    
             </Link>
-            
+            <h1 className="flex items-start font-semibold text-gray-900 text-2xl dark:text-gray-300 my-4">Alat {detail.tool_id}</h1>
         </div>
         <div className="bg-gray-100 dark:bg-gray-800 rounded-xl py-4 max-w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
             <div className="flex flex-col md:flex-row -mx-4">
-                <div className="md:flex-1 px-4">
+                <div className="md:flex-1 px-4 mb-4">
                     <div className="rounded-lg bg-gray-300 dark:bg-gray-700 ">
                         <img className="h-72 w-full rounded-lg object-cover" src={`${BASE_URL}/images/${detail.gambar_tool}`} alt={detail.name_tool}/>
                     </div>
                 </div>
-                <div className="md:flex-1 px-2">
+                <div className="md:flex-1 px-2 ms:mt-0">
                     <h2 className="flex items-start text-2xl font-semibold text-gray-900 dark:text-white mb-2">{detail.name_tool} - {detail.tool_id}</h2>
                     <p className="flex text-start text-gray-600 dark:text-gray-300 text-sm mb-4">
                         {detail.deskripsi}
