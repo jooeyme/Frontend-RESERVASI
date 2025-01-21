@@ -139,7 +139,7 @@ function App() {
           />
 
           <Route 
-            path={"/home-user"}
+            path={"/"}
             element={
               <HomeUser/>
           }
