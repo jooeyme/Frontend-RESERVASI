@@ -236,7 +236,7 @@ const EditFormTool = () => {
                 id="require_double_verification"
                 name="require_double_verification"
                 onChange={handleChange}
-                value={formData.require_double_verification}
+                checked={formData.require_double_verification}
                 className="p-2.5 border border-gray-300 rounded-md"
               />
               <label className="block text-left text-sm font-semibold font-poppins">

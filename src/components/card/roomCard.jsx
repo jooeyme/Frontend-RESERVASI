@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const RoomCard = ({room, id, room_id,name_room, deskripsi_room, gambar_room, showDetails}) => {
-    
+    console.log("apa isi base ULR:", BASE_URL)
     return (
 
 

@@ -7,7 +7,12 @@ import logo from '../assets/logo_ipb.png';
 
 const NavbarUser = ({ toggleSidebar, User }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [user, setUser] = useState(User || null);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+      setUser(User);
+    }, [User])
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -80,25 +85,41 @@ const NavbarUser = ({ toggleSidebar, User }) => {
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
               >
+                {user ? (
+                  <>
                 <div className="px-4 py-3">
-                  <span className="block text-sm text-gray-900 dark:text-white">{User.username}</span>
+                  <span className="block text-sm text-gray-900 dark:text-white">{user.username}</span>
                   <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
-                    {User.email}
+                    {user.email}
                   </span>
                 </div>
                 <ul className="py-1" role="none">
                   <li>
-                    {!User ? (
-                      <Link to={"/login"}>
-                      <button >Login</button>
-                    </Link>
-                    ) : (
-                      <Logout />
-                  )}
+                    
+                  <Logout />
                   </li>
-                </ul>
+                  </ul> 
+                  </>
+                    ) : (
+                      <>
+                    <div className="px-4 py-3">
+                      <span></span>
+                    </div>
+                    <ul>
+                      <li>
+                        <Link to="/login">
+                          <button 
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                          >Login</button>
+                        </Link>
+                    
+                      </li>
+                    </ul>
+                  </>
+                  )}
               </div>
             )}
+            
 
 
           </div>

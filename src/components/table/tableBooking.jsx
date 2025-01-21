@@ -21,6 +21,7 @@ const BookingTableMoved = ({onDelete}) => {
     const [selectedRoom, setSelectedRoom] = useState("");
     const [note, setNote] = useState("");
     const [isModalOpen, setModalOpen] = useState(false);
+    
     //const [filteredRoomBookings, setFilteredRoomBookings] = useState([]);
     
 
@@ -45,6 +46,11 @@ const BookingTableMoved = ({onDelete}) => {
     };
 
     const handleMoveReservation = async () => {
+        const id = selectedBooking
+        const formData = {
+            newRoomId: selectedRoom,
+            note: note,
+          };
         try {
             if (!selectedRoom) {
                 Swal.fire({
@@ -56,8 +62,8 @@ const BookingTableMoved = ({onDelete}) => {
                   });
                 return;
             }
-    
-            const movedReservation = await moveReservation(selectedBooking, selectedRoom, note);
+        
+            const movedReservation = await moveReservation(id, formData);
             if (movedReservation) {
                 Swal.fire({
                     title: "Berhasil!",
@@ -89,7 +95,6 @@ const BookingTableMoved = ({onDelete}) => {
                 showConfirmButton: false,
               });
         }
-        
     };
 
     const handleBookingClick = async (Booking) => {
@@ -275,7 +280,7 @@ const BookingTableMoved = ({onDelete}) => {
                             ) : (
                             <tbody>
                                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                                    <td colSpan="7" className="text-center py-4 text-lg">No data available.</td>
+                                    <td colSpan="8" className="text-center py-4 text-lg">No data available.</td>
                                 </tr>
                             </tbody>
                             )}

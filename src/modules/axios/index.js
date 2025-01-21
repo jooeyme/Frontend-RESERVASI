@@ -4,9 +4,7 @@ import axios from "axios";
 // production || develop
 const baseURL = import.meta.env.VITE_API_URL;
 
-
 const instance = axios.create({ baseURL });
-console.log("apa isi url", baseURL)
 // Add interceptor to automatically add authorization header
 instance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

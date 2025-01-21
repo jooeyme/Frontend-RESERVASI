@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, role }) => {
               <span className="ms-3">Beranda</span>
             </a>
           </li>
-          {(role === 'admin' || role === 'admin_staff' || role === 'admin_leader' || role === 'admin_mm') && (
+          {(role === 'admin' || role === 'admin_staff' || role === 'admin_leader' || role === 'admin_mm' || role === 'admin_tu') && (
           <li>
             <a
               href="/filtered-booking"

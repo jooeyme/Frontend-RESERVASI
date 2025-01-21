@@ -20,7 +20,7 @@ const EditFormRoom = () => {
       deskripsi_room: '',
       fasilitas: '',
       gambar_room: null,
-      require_double_verification: false,
+      require_double_verification: '',
       type: ''
     
     });
@@ -254,7 +254,7 @@ const EditFormRoom = () => {
                 id="require_double_verification"
                 name="require_double_verification"
                 onChange={handleChange}
-                value={formData.require_double_verification}
+                checked={formData.require_double_verification}
                 className="flex p-2.5 border border-gray-300 rounded-md align-end "
               />
             </div>

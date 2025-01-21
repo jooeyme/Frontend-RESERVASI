@@ -148,7 +148,7 @@ function App() {
           <Route 
             path={"/home-admin"}
             element={
-            <PrivateRoute allowedRoles={["admin", "super_admin", "admin_staff", 'admin_leader', 'admin_mm']}>
+            <PrivateRoute allowedRoles={["admin", "super_admin", "admin_staff", 'admin_leader', 'admin_mm', 'admin_tu']}>
               <HomeAdmin/>
             </PrivateRoute>
           }
@@ -176,7 +176,7 @@ function App() {
           <Route
             path={"/filtered-booking"}
             element={
-              <PrivateRoute allowedRoles={["admin", "admin_staff", "admin_leader", "admin_mm"]}>
+              <PrivateRoute allowedRoles={["admin", "admin_staff", "admin_leader", "admin_mm", "admin_tu"]}>
                 <DaftarBookingFiltered />
               </PrivateRoute>
             }
