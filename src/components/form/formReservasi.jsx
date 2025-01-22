@@ -62,12 +62,13 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
       });
     } else {
       const [sessionIndex, sessionField] = name.split('-');
-      const updatedBookings = dateBooks.map((booking, i) =>
-        i === parseInt(sessionIndex)
-          ? { ...booking, [sessionField]: value }
-          : booking
+      setDateBooks((prevDateBooks) =>
+        prevDateBooks.map((booking, i) =>
+          i === parseInt(sessionIndex)
+            ? { ...booking, [sessionField]: value }
+            : booking
+        )
       );
-      setDateBooks(updatedBookings);
     }
   };
 

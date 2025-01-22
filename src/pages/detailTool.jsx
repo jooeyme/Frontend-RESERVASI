@@ -117,7 +117,7 @@ const DetailTool = () => {
                     <div className="flex mb-2">
                             <span className="flex items-start font-semibold text-gray-900 dark:text-gray-300">jumlah:</span>
                             <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.jumlah}</span>
-                        </div>
+                    </div>
                     <div className="flex mb-2">
                         <span className="flex items-start font-semibold text-gray-900 dark:text-gray-300">Alamat/Lokasi:</span>
                         <span className="text-gray-600 dark:text-gray-300 ml-2">{detail.alamat_tool}</span>
