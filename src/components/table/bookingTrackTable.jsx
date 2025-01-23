@@ -15,11 +15,12 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaCheckDouble,
+  FaRetweet
 } from "react-icons/fa";
 import ComponentPagination from "../pagination";
 import Datepicker from "react-tailwindcss-datepicker";
 import Swal from "sweetalert2";
-import { Button, Modal } from "flowbite-react";
+import { Modal } from "flowbite-react";
 
 const TrackTableBooking = () => {
   const navigate = useNavigate();
@@ -32,8 +33,14 @@ const TrackTableBooking = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedTracking, setSelectedTracking] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [openNote, setOpenNote] = useState(false);
+  const [note, setNote] = useState('');
   const [value, setValue] = useState({ startDate: null, endDate: null });
 
+  const handleOpenNote = (bookingNote) => {
+    setNote(bookingNote);
+    setOpenNote(true)
+  }
   const handleCloseClick = () => {
     setIsOpen(false); // Update state to hide the card
   };
@@ -162,6 +169,10 @@ const TrackTableBooking = () => {
         (booking) => booking.booking_status === "rejected"
       );
     } else if (activeTab === 3) {
+      filteredBookings = booking.filter(
+        (booking) => booking.booking_status === "moved"
+      );
+    } else if (activeTab === 4) {
       filteredBookings = booking.filter(
         (booking) => booking.booking_status === "returned"
       );
@@ -670,6 +681,168 @@ const TrackTableBooking = () => {
             />
           </div>
         </Tabs.Item>
+        <Tabs.Item 
+                active
+                title="Dipindahkan" 
+                icon={FaRetweet} 
+                >
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
+                    <div className="flex justify-center mb-4">
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400 border-b-4 border-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3"></th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Nama Peminjam
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Reservasi
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Waktu 
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Detail
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Catatan
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Status
+                                    </th>
+                                    
+                                </tr>
+                            </thead>
+                            {currentItems.length > 0 ? (
+                            <tbody>
+                            {currentItems.map((booking, index) => (
+                            <tr 
+                                key={booking.id} 
+                                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                            >
+                                <td className="px-4 py-4">
+                                    {index + 1}
+                                </td>
+                                <td scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {booking.peminjam}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {booking.room_id}
+                                </td>
+                                <td className="px-4 py-4">
+                                    {formatDateString(booking.booking_date)}
+                                </td>
+                                <td className="px-4 py-4">
+                                    <span className="flex items-center justify-start ">
+                                        {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                                    </span>
+                                </td>
+                                <td className="px-4 py-4">
+                                <button
+                                    type="button"
+                                    className="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                                    onClick={() => handleBookingClick(booking.id)}
+                                >
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                                            stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round"
+                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </span>
+                                    <span className="hidden md:inline-block">View</span>
+                                </button>
+                                </td>
+                                <td className="px-4 py-4">
+                                    <>
+                                                    
+                                                      <button
+                                                        onClick={() => handleOpenNote(booking.note)}
+                                                        className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-0 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                                      >
+                                                        Catatan
+                                                      </button>
+                                                    
+                                                    <Modal show={openNote} onClose={() => setOpenNote(false)}>
+                                                      <Modal.Header className="p-2 font-sm">
+                                                        Alasan peminjaman Dipindahkan
+                                                      </Modal.Header>
+                                                      <Modal.Body>
+                                                        <div className="space-y-6">
+                                                          <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                                            {note}
+                                                          </p>
+                                                        </div>
+                                                      </Modal.Body>
+                                                    </Modal>
+                                                  </>
+                                </td>
+                                <td className="px-4 py-4">
+                                {booking.booking_status === 'pending' ? (
+                                        <CustomSelect
+                                            booking={booking}
+                                            handleChangeStatus={handleChangeStatus}
+                                        />
+                                    ) : (
+                                        <span className="flex items-center justify-start ">
+                                            {booking.booking_status === 'approved' && (
+                                                <>
+                                                <FaCheckCircle className="mr-2" style={{ color: "green" }} size={12} />
+                                                <div className="text-sm font-semibold text-gray-800">Disetujui</div>
+                                                </>
+                                            )}
+                                            {booking.booking_status === 'rejected' && (
+                                                <>
+                                                <FaTimesCircle className="mr-2" style={{ color: "red" }} size={12} />
+                                                <div className="text-sm font-semibold text-gray-800">Ditolak</div>
+                                                </>
+                                            )}
+                                            {booking.booking_status === 'pending' && (
+                                                <>
+                                                <FaHourglassHalf className="mr-2" style={{ color: "gray" }} size={12} />
+                                                <div className="text-sm font-semibold text-gray-800">Pending</div>
+                                                </>
+                                            )}
+                                            {booking.booking_status === 'returned' && (
+                                                <>
+                                                <FaCheckDouble className="mr-2" style={{ color: "blue" }} size={12} />
+                                                <div className="text-sm font-semibold text-gray-800">Selesai</div>
+                                                </>
+                                            )} 
+                                            {booking.booking_status === 'moved' && (
+                                                <>
+                                                <FaRetweet className="mr-2" style={{ color: "gray" }} size={12} />
+                                                <div className="text-sm font-semibold text-gray-800">Dipindahkan</div>
+                                                </>
+                                            )}    
+                                        </span>
+                                    )}    
+                                </td>
+                            </tr>    
+                            ))}
+                                
+                            </tbody>
+                            ) : (
+                                <tbody>
+                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                        <td colSpan="8" className="text-center py-4 text-lg">No data available.</td>
+                                    </tr>
+                                </tbody>
+                                )}
+                        </table>
+                    </div>
+                    <ComponentPagination
+                            itemsPerPage={itemsPerPage}
+                            totalItems={filteredData().length}
+                            paginate={paginate}
+                            
+                />
+                </div>
+                </Tabs.Item>
         <Tabs.Item active title="Selesai" icon={FaCheckDouble}>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
             <div className="flex justify-center mb-4">

@@ -18,7 +18,8 @@ import {
 } from 'date-fns'
 import id from 'date-fns/locale/id'
 import { useState } from 'react'
-import { FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaCheckDouble,  } from 'react-icons/fa';
+import { FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaCheckDouble, FaRetweet  } from 'react-icons/fa';
+import { Modal } from 'flowbite-react';
 
 const locale = id
 
@@ -31,7 +32,6 @@ export default function CalenderBooking({bookings}) {
   let [selectedDay, setSelectedDay] = useState(today)
   let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
   let firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
-
 
   let days = eachDayOfInterval({
     start: startOfWeek(firstDayCurrentMonth),
@@ -173,6 +173,13 @@ function Meeting({ booking }) {
   let DateTime = parseISO(booking.booking_date)
   const startTime = parse(booking.start_time, 'HH:mm:ss', new Date());
   const endTime = parse(booking.end_time, 'HH:mm:ss', new Date());
+  const [openModal, setOpenModal] = useState(false);
+  const [note, setNote] = useState('');
+
+  const handleOpenModal = (bookingNote) => {
+    setNote(bookingNote);
+    setOpenModal(true)
+  }
 
   return (
     <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-gray-100 hover:bg-gray-100">
@@ -183,6 +190,7 @@ function Meeting({ booking }) {
         {booking.booking_status === 'rejected' && <FaTimesCircle style={{color: "red"}} size={30}/>}            
         {booking.booking_status === 'pending' && <FaHourglassHalf style={{color: "gray"}} size={30}/>} 
         {booking.booking_status === 'returned' && <FaCheckDouble style={{color: "blue"}} size={30}/>}
+        {booking.booking_status === 'moved' && <FaRetweet style={{color: "gray"}} size={30}/>}
                 
       </span>
       <div className="flex-auto">
@@ -197,6 +205,31 @@ function Meeting({ booking }) {
             {format(endTime, 'h:mm a')}
           </time>
         </p>
+        {booking.booking_status === 'moved' && (
+          <>
+          <div className="">
+          <button
+              onClick={() => handleOpenModal(booking.note)}
+              className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-0 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Catatan
+            </button>
+          </div>
+          <Modal show={openModal} onClose={() => setOpenModal(false)}>
+            <Modal.Header className="p-2 font-sm">
+              Alasan peminjaman Dipindahkan
+            </Modal.Header>
+            <Modal.Body>
+              <div className="space-y-6">
+                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  {note}
+                </p>
+              </div>
+            </Modal.Body>
+          </Modal>
+          </>
+        )}
+        
       </div>
       
     </li>

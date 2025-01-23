@@ -1,6 +1,5 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import { useState } from 'react'
 import PrivateRoute from "./components/protectedRoutes";
 import './App.css'
 import FormAddRoom from './pages/addroom'
@@ -25,17 +24,13 @@ import UserLoginPage from './pages/UserLogin'
 import AdminLoginPage from './pages/AdminLogin'
 import UserListPage from './pages/ListUserPage';
 import RegisterPage from './pages/Register';
-import ListFile from './pages/fileList';
-import ListFileUser from './pages/fileListUser';
-import RequestLetter from './pages/reqletter';
-import GeneratePDF from './pages/generatePDF';
-import Document from './pages/Document';
 import SessionExpired from './pages/sessionExpired';
 import DaftarBookingFiltered from './pages/daftarBookingFiltered';
 import MovedBooking from './pages/movedReservation';
 import DaftarTrackBooking from './pages/ListBookingTrack';
 import DaftarTrackBookingTool from './pages/ListBookingToolTrack';
 import TermsAndConditions from './pages/termsAndCondition';
+import ToolTermsAndConditions from './pages/ToolTermsAndConditions';
 
 function App() {
 
@@ -46,6 +41,11 @@ function App() {
           <Route 
             path={'/terms-and-conditions'}
             element={<TermsAndConditions />}
+          />
+
+          <Route 
+            path={'/tool-terms-and-conditions'}
+            element={<ToolTermsAndConditions />}
           />
 
           <Route 

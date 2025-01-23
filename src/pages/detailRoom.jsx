@@ -128,7 +128,7 @@ const DetailRoom = () => {
                         </div>
                         <div className="flex mb-2">
                             <span className="flex items-start font-semibold text-gray-900 dark:text-gray-300">Fasilitas:</span>
-                            <p className="flex items-start text-gray-600 dark:text-gray-300 text-sm">
+                            <p className="flex items-start text-gray-600 dark:text-gray-300 ml-2">
                                 {detail.fasilitas}
                             </p>
                         </div>
@@ -160,7 +160,6 @@ const DetailRoom = () => {
                 </div>
                 }
             </div>
-                
         </div>
     </div>
     <div className="flex items-start justify-start">

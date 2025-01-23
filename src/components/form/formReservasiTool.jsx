@@ -332,7 +332,7 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
                 >
                     Saya telah membaca dan menyetujui{" "}
                     <a
-                        href="/terms-and-conditions"
+                        href="/tool-terms-and-conditions"
                         target="_blank"
                         className="text-blue-600 hover:underline dark:text-blue-500"
                     >
