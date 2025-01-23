@@ -19,7 +19,7 @@ const ToolCard = ({alat, id, tool_id,name_tool, deskripsi,jumlah, gambar_tool, s
                     <h5 className="flex text-left mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{name_tool}</h5>
                 </Link>
                 <p className="flex text-left font-normal text-gray-700 dark:text-gray-400">{deskripsi}</p>
-                <h5 className="flex items-start text-lg font-light">{jumlah}</h5>
+                <p className="flex items-start text-lg font-medium text-gray-700 dark:text-gray-400">Tersedia: {jumlah}</p>
             
             </div>
         </div>
