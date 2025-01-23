@@ -11,6 +11,12 @@ const combineDateTime = (date, time) => {
     return dateTime;
   };
 const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
+    const [localIsOpen, setIsOpen] = useState(isOpen || true); 
+    const [jenis_pengguna, setJenis_pengguna] = useState("");
+    const [jenis_kegiatan, setJenis_kegiatan] = useState("");
+    const [showOption, setShowOption] = useState(false);
+    const [isOtherKegiatan, setIsOtherKegiatan] = useState(false);
+    const [isAgreed, setIsAgreed] = useState(false);
     const [dateBooks, setDateBooks] = useState([{ 
         booking_date: '',
         start_time: '',
@@ -23,21 +29,20 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
         desk_activity: '',
         dept: '',
         bookings: dateBooks,
+        jenis_pengguna: jenis_pengguna,
+        jenis_kegiatan: jenis_kegiatan,
   });
 
-  const [localIsOpen, setIsOpen] = useState(isOpen || true); 
-  const [jenis_pengguna, setJenis_pengguna] = useState("");
-  const [jenis_kegiatan, setJenis_kegiatan] = useState("");
-  const [showOption, setShowOption] = useState(false);
-  const [isOtherKegiatan, setIsOtherKegiatan] = useState(false);
-  const [isAgreed, setIsAgreed] = useState(false);
+  
 
   useEffect(() => {
     setFormData((prev) => ({
         ...prev,
         bookings: dateBooks,
+        jenis_pengguna: jenis_pengguna,
+        jenis_kegiatan: jenis_kegiatan,
     }));
-}, [dateBooks]);
+}, [dateBooks, jenis_pengguna, jenis_kegiatan]);
 
   const handleAddSession = () => {
     setDateBooks([...dateBooks, { booking_date: '', start_time: '', end_time: ''}]);
@@ -74,7 +79,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!isAgreed) {
         alert("Anda harus menyetujui ketentuan yang berlaku untuk melanjutkan!");
         return;

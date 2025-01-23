@@ -7,6 +7,12 @@ import { createBookingTool } from '../../modules/fetch/reservasi';
 
 const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
     const navigate = useNavigate();
+    const [localIsOpen, setIsOpen] = useState(isOpen || true); 
+    const [jenis_pengguna, setJenis_pengguna] = useState("");
+    const [jenis_kegiatan, setJenis_kegiatan] = useState("");
+    const [showOption, setShowOption] = useState(false);
+    const [isOtherKegiatan, setIsOtherKegiatan] = useState(false);
+    const [isAgreed, setIsAgreed] = useState(false);
     const [dateBooks, setDateBooks] = useState([{ 
             booking_date: '',
             start_time: '',
@@ -20,21 +26,18 @@ const ReservationToolCard = ({ToolId, isOpen, handleCloseClick}) => {
         desk_activity: '',
         dept: '',
         quantity: 0,
-  });
-
-  const [localIsOpen, setIsOpen] = useState(isOpen || true); 
-  const [jenis_pengguna, setJenis_pengguna] = useState("");
-  const [jenis_kegiatan, setJenis_kegiatan] = useState("");
-  const [showOption, setShowOption] = useState(false);
-  const [isOtherKegiatan, setIsOtherKegiatan] = useState(false);
-  const [isAgreed, setIsAgreed] = useState(false);
+        jenis_kegiatan: jenis_kegiatan,
+        jenis_pengguna: jenis_pengguna,
+  });  
 
   useEffect(() => {
       setFormData((prev) => ({
           ...prev,
           bookings: dateBooks,
+          jenis_kegiatan: jenis_kegiatan,
+          jenis_pengguna: jenis_pengguna,
       }));
-  }, [dateBooks]);
+  }, [dateBooks, jenis_kegiatan, jenis_pengguna]);
 
   const handleAddSession = () => {
     setDateBooks([...dateBooks, { booking_date: '', start_time: '', end_time: ''}]);
