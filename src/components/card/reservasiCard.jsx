@@ -41,6 +41,8 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
     Tool,
   } = bookingData;
 
+  const displayJenisKegiatan = jenis_kegiatan.startsWith("other:") ? jenis_kegiatan.split(":")[1] : jenis_kegiatan;
+
   const formatDateString = (dateString) => {
     if (!dateString) return 'Invalid date';
     const date = parseISO(dateString);
@@ -154,7 +156,7 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
         </span>
         <div className="flex gap-4">
           <span>
-            {jenis_kegiatan}
+            {displayJenisKegiatan}
           </span>
           <span>
             {jenis_pengguna}
