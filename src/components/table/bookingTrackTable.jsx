@@ -782,12 +782,7 @@ const TrackTableBooking = () => {
                                                   </>
                                 </td>
                                 <td className="px-4 py-4">
-                                {booking.booking_status === 'pending' ? (
-                                        <CustomSelect
-                                            booking={booking}
-                                            handleChangeStatus={handleChangeStatus}
-                                        />
-                                    ) : (
+                                (
                                         <span className="flex items-center justify-start ">
                                             {booking.booking_status === 'approved' && (
                                                 <>
@@ -820,7 +815,7 @@ const TrackTableBooking = () => {
                                                 </>
                                             )}    
                                         </span>
-                                    )}    
+                                    )   
                                 </td>
                             </tr>    
                             ))}

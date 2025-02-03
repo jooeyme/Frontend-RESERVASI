@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createBookingRoom } from '../../modules/fetch/reservasi';
-import { Button, Modal, TextInput } from "flowbite-react";
 
-const combineDateTime = (date, time) => {
-    const dateTime = new Date(date);
-    const [hours, minutes] = time.split(':');
-    dateTime.setHours(hours, minutes);
-    return dateTime;
-  };
 const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
     const [localIsOpen, setIsOpen] = useState(isOpen || true); 
     const [jenis_pengguna, setJenis_pengguna] = useState("");
@@ -17,6 +10,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
     const [showOption, setShowOption] = useState(false);
     const [isOtherKegiatan, setIsOtherKegiatan] = useState(false);
     const [isAgreed, setIsAgreed] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [dateBooks, setDateBooks] = useState([{ 
         booking_date: '',
         start_time: '',
@@ -79,7 +73,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     if (!isAgreed) {
         alert("Anda harus menyetujui ketentuan yang berlaku untuk melanjutkan!");
         return;
@@ -118,6 +112,8 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
             hideProgressBar: true,
             autoClose: 5000
         });     
+    } finally {
+        setIsLoading(false); 
     }
   };
 
@@ -348,8 +344,9 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                 <div className="col-span-2 sm:col-span-1">
                     <button 
                     type="submit"
+                    disabled={isLoading}
                     className="w-full text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Kirim
+                        {isLoading ? "Loading..." : "Kirim"}
                     </button>
                 </div>
             </div>
