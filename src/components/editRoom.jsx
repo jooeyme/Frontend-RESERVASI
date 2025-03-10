@@ -21,8 +21,8 @@ const EditFormRoom = () => {
       fasilitas: '',
       gambar_room: null,
       require_double_verification: '',
-      type: ''
-    
+      type: '',
+      pengelola: '',	
     });
 
     const handleChange = (e) => {
@@ -90,7 +90,8 @@ const EditFormRoom = () => {
                     fasilitas: roomData.fasilitas,
                     gambar_room: roomData.gambar_room,
                     require_double_verification: roomData.require_double_verification,
-                    type: roomData.type
+                    type: roomData.type,
+                    pengelola: roomData.pengelola
                 })
                 if (roomData.gambar_room) {
                   setExistingImageURL(roomData.gambar_room); // Set existing image URL
@@ -277,6 +278,20 @@ const EditFormRoom = () => {
                     <option value="lab">Ruang Laboratorium</option>
                     <option value="meeting">Ruang Meeting</option>
                 </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="pengelola" className="block text-left text-sm font-semibold font-poppins">
+                Nomor WhatsApp Pengelola
+              </label>
+              <input
+                placeholder='Nomor WhatsApp cont: 62822..'
+                type="text"
+                id="pengelola"
+                name="pengelola"
+                onChange={handleChange}
+                value={formData.pengelola} 
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              />
             </div>
 
             </div>

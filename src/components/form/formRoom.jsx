@@ -18,6 +18,7 @@ const FormRoom = () => {
       gambar_room: '',
       require_double_verification: false,
       type: '',
+      pengelola: '',
     
     });
 
@@ -58,6 +59,7 @@ const FormRoom = () => {
                 gambar_room: '',
                 require_double_verification: false,
                 type: '',
+                pengelola: '',
 
             });
 
@@ -259,6 +261,22 @@ const FormRoom = () => {
                     <option value="meeting">Ruang Meeting</option>
                 </select>
             </div>
+            <div className="mb-4">
+              <label htmlFor="pengelola" className="block text-left text-sm font-semibold font-poppins">
+                Nomor Whatsapp Pengelola
+              </label>
+              <input
+                placeholder='Nomor WhatsApp cont: 62822..'
+                type="text"
+                id="pengelola"
+                name="pengelola"
+                onChange={handleInputChange}
+                value={formData.pengelola} 
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                required
+              />
+            </div>
+
             </div>
 
             

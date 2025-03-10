@@ -17,6 +17,7 @@ const FormAlat = () => {
         gambar_tool: '',
         require_double_verification: false,
         type: '',
+        pengelola: '',
     });
 
     const handleInputChange = (e) => {
@@ -57,6 +58,7 @@ const FormAlat = () => {
                 gambar_tool: '',
                 require_double_verification: false,
                 type: '',
+                pengelola: '',
             });
 
             toast.success('Tool Added successfully', {
@@ -240,6 +242,21 @@ const FormAlat = () => {
                                 <option value="multimedia">Alat Multimedia</option>
                                 
                             </select>
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="pengelola" className="block text-left text-sm font-semibold font-poppins">
+                                Nomor WhatsApp Pengelola
+                            </label>
+                            <input
+                                placeholder='Nomor WhatsApp cont: 62822..'
+                                type="text"
+                                id="pengelola"
+                                name="pengelola"
+                                onChange={handleInputChange}
+                                value={formData.pengelola} 
+                                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                                required
+                            />
                         </div>
                 </div>
 

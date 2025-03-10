@@ -39,6 +39,7 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
     dept,
     Room,
     Tool,
+    path_file,
   } = bookingData;
 
   const displayJenisKegiatan = jenis_kegiatan.startsWith("other:") ? jenis_kegiatan.split(":")[1] : jenis_kegiatan;
@@ -145,6 +146,11 @@ const ReservationCard = ({ bookingData, isOpen, handleCloseClick }) => {
             <span className="text-gray-600 dark:text-gray-300 ml-2">
               {booking_status}
             </span>
+          </div>
+          <div className="flex items-center mb-2">
+          <a href={`${path_file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+            Lampiran
+          </a>
           </div>
           </div>
         </div>

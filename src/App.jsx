@@ -10,15 +10,13 @@ import HomeUser from './pages/homeUser'
 import RoomsPage from './pages/allRoom'
 import DetailRoom from './pages/detailRoom'
 import DetailTool from './pages/detailTool'
-import DaftarPegawai from './pages/daftarPegawai'
-import DetailPegawai from './pages/detailPegawai'
-import EditEmployee from './pages/editEmployee';
+
 import HomeAdmin from './pages/homeAdmin'
 import RoomsforEdit from './pages/inventarisRoom'
 import ToolsforEdit from './pages/inventarisTool'
 import RoomEdit from './pages/roomEdit'
 import ToolsPage from './pages/allTool'
-import Profil from './pages/profilPegawai'
+
 import ToolEdit from './pages/toolEdit'
 import UserLoginPage from './pages/UserLogin'
 import AdminLoginPage from './pages/AdminLogin'
@@ -31,7 +29,9 @@ import DaftarTrackBooking from './pages/ListBookingTrack';
 import DaftarTrackBookingTool from './pages/ListBookingToolTrack';
 import TermsAndConditions from './pages/termsAndCondition';
 import ToolTermsAndConditions from './pages/ToolTermsAndConditions';
-
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+ 
 function App() {
 
   return (
@@ -93,30 +93,22 @@ function App() {
             element={<UserLoginPage/>}
           />
 
+          <Route
+            path={"/auth/forgot-password"}
+            element={<ForgotPasswordPage/>}
+          />
+
+          <Route
+            path={"/auth/reset-password/:token"}
+            element={<ResetPasswordPage/>}
+          />
+
           <Route 
             path={"/admin"}
             element={<AdminLoginPage/>}
           />
 
-          <Route 
-            path={"/pegawai/:id"}
-            element={<DetailPegawai/>}
-          /> 
 
-          <Route 
-            path={"/edit-pegawai/:id"}
-            element={<EditEmployee/>}
-          /> 
-
-          <Route 
-            path={"/profil/:id"}
-            element={<Profil/>}
-          />
-
-          <Route 
-            path={"/daftar-pegawai"}
-            element={<DaftarPegawai/>}
-          /> 
 
           <Route 
             path={"/detailroom/:id"}

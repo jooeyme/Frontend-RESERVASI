@@ -5,26 +5,40 @@ const TermsAndConditions = () => {
         <div className="p-8 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-4">Syarat dan Ketentuan</h1>
             <p className="text-gray-600 mb-4">
-                Selamat datang di platform kami! Dengan menggunakan layanan kami, Anda setuju untuk
+                Selamat datang di Layanan Peminjaman Ruangan Manajemen Hutan! Dengan menggunakan layanan kami, Anda setuju untuk
                 mematuhi syarat dan ketentuan berikut:
             </p>
 
             <ol className="list-decimal list-inside text-gray-600 space-y-3">
                 <li>
-                    Anda bertanggung jawab untuk memberikan informasi yang akurat saat
-                    melakukan reservasi.
+                    Permohonan peminjaman ruangan harus disertai dengan lampiran berupa surat kegiatan atau bukti resmi terkait.
                 </li>
                 <li>
-                    Semua pemesanan yang dibuat melalui platform ini tunduk pada ketersediaan
-                    layanan.
+                    Peminjam melakukan permohonan peminjaman paling lambat H-3.
                 </li>
                 <li>
-                    Anda setuju untuk tidak menyalahgunakan layanan kami untuk tujuan ilegal
-                    atau merugikan.
+                    Peminjam harus konfirmasi ulang kepada kontak person H-1 jika tidak permohonan akan di batalkan.
                 </li>
                 <li>
-                    Kami berhak untuk membatalkan reservasi jika ditemukan pelanggaran terhadap
-                    aturan yang berlaku.
+                    Peminjam harus menggunakan ruangan sesuai dengan jadwal yang telah ditentukan (senin-jumat pukul 08:00 WIB s.d. 22:00 WIB).
+                </li>
+                <li>
+                    Peminjam dilarang merokok, membawa minuman keras, narkoba, dan senjata tajam.
+                </li>
+                <li>
+                    Peminjam harus menjaga kebersihan ruangan.
+                </li>
+                <li>
+                    Peminjam bertanggung jawab atas pengembalian seluruh peralatan penunjang atau fasilitas.
+                </li>
+                <li>
+                    Peminjam wajib mengganti biaya kerusakan secara individu atau kelompok.
+                </li>
+                <li>
+                    Peminjam dilarang memindahkan tangan atau meminjamkan fasilitas tanpa izin pengelola.
+                </li>
+                <li>
+                    Pengelola berhak untuk membatalkan atau memindahkan permohonan peminjaman jika terjadi hal diluar kendali.
                 </li>
             </ol>
 

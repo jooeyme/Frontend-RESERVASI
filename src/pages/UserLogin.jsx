@@ -81,9 +81,14 @@ const UserLogin = () => {
                           className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Login
                         </button>
+                        <div className="flex gap-4">
+                        <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                          <Link to="/auth/forgot-password" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot Password?</Link>
+                        </p>
                         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                             Don’t have an account yet? <Link to="/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Register</Link>
                         </p>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -7,7 +7,28 @@ import MainLayoutUser from "./MainLayoutUser";
 import CalenderBooking from "../components/calenderBooking";
 import Swal from 'sweetalert2';
 import { ChevronLeftIcon } from '@heroicons/react/solid'
+import { FaWhatsapp } from "react-icons/fa";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+const WhatsAppButton = ({ phoneNumber, message }) => {
+    // Format nomor agar hanya berisi angka
+    const formattedNumber = phoneNumber // Hanya angka
+    const encodedMessage = encodeURIComponent(message || "Halo, saya butuh informasi!");
+  
+    const handleClick = () => {
+      window.open(`https://wa.me/${formattedNumber}?text=${encodedMessage}`, "_blank");
+    };
+  
+    return (
+      <button
+        onClick={handleClick}
+        className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition"
+      >
+        <FaWhatsapp size={20} />
+        Hubungi Pengelola
+      </button>
+    );
+  };
 
 const DetailRoom = () => {
     const {id} = useParams();
@@ -134,6 +155,7 @@ const DetailRoom = () => {
                         </div>
                     
                     <div className="flex -mx-2 mt-4">
+                            <WhatsAppButton phoneNumber={detail.pengelola} message="Halo, apakah ruangan ini tersedia?" />
                         <div className="w-1/2 px-2">
                             <button 
                                 onClick= {() =>{
@@ -143,7 +165,7 @@ const DetailRoom = () => {
                                         handleShowAlert();
                                       }
                                 }}
-                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-semibold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
                                 Pesan Ruangan
                             </button>
                         </div>

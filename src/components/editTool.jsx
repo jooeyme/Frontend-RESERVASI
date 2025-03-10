@@ -20,7 +20,8 @@ const EditFormTool = () => {
       deskripsi: '',
       gambar_tool: null,
       require_double_verification: false,
-      type: ''
+      type: '',
+      pengelola: '',
     });
 
     const handleChange = (e) => {
@@ -88,7 +89,8 @@ const EditFormTool = () => {
                     deskripsi: toolData.deskripsi,
                     gambar_tool: toolData.gambar_tool,
                     require_double_verification: toolData.require_double_verification,
-                    type: toolData.type
+                    type: toolData.type,
+                    pengelola: toolData.pengelola
                 })
                 if (toolData.gambar_tool) {
                   setExistingImageURL(toolData.gambar_tool); // Set existing image URL
@@ -262,6 +264,20 @@ const EditFormTool = () => {
                     <option value="multimedia">Alat Multimedia</option>
                     
                 </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="pengelola" className="block text-left text-sm font-semibold font-poppins">
+                Nomor WhatsApp Pengelola
+              </label>
+              <input
+                placeholder='Nomor WhatsApp cont: 62822..'
+                type="text"
+                id="pengelola"
+                name="pengelola"
+                onChange={handleChange}
+                value={formData.pengelola} 
+                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+              />
             </div>
 
             

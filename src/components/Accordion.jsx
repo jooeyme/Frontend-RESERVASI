@@ -57,9 +57,9 @@ const Accordion = () => {
 
   return (
     <div className="rounded-t-xl">
-      <AccordionItem
+      {/* <AccordionItem
         id="1"
-        heading="Bagaimana cara melakukan reservasi ruangan dan alat?" //DIubah jadi pertanyaan?
+        heading="Bagaimana cara melakukan reservasi ruangan dan alat?" 
         isOpen={openItemId === '1'}
         onToggle={toggleAccordionItem}
       >
@@ -104,6 +104,19 @@ const Accordion = () => {
       <AccordionItem
         id="4"
         heading="Apa yang harus dilakukan jika sudah selesai menggunakan ruangan atau alat?"
+        isOpen={openItemId === '4'}
+        onToggle={toggleAccordionItem}
+      >
+        <ol class="list-decimal">
+            <li className='mx-4 mb-2 text-left text-gray-500 dark:text-gray-400'>Hubungi juru kunci untuk memeriksa kelengkapan ruangan atau alat, jika ada kekurangan atau kerusakan maka KTM atau KTP penanggung jawab akan disita sampai mengganti rugi</li>
+            
+                         
+        </ol>
+      </AccordionItem> */}
+
+      <AccordionItem
+        id="4"
+        heading="TATA TERTIB LAYANAN PEMINJAMAN RUANGAN DAN ALAT MANAJEMEN HUTAN IPB"
         isOpen={openItemId === '4'}
         onToggle={toggleAccordionItem}
       >

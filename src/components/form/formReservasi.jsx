@@ -26,6 +26,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
         jenis_pengguna: jenis_pengguna,
         jenis_kegiatan: jenis_kegiatan,
   });
+  const [selectedFile, setSelectedFile] = useState(null);
 
   
 
@@ -73,14 +74,32 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (!selectedFile) {
+        console.error("No file selected");
+        return;
+    }
+
     if (!isAgreed) {
         alert("Anda harus menyetujui ketentuan yang berlaku untuk melanjutkan!");
         return;
     }
+
+    const formDataToSend = new FormData();
+    // Tambahkan semua data ke dalam FormData
+    formDataToSend.append("file", selectedFile); // Menambahkan file PDF
+    Object.keys(formData).forEach((key) => {
+        if(key === "bookings") {
+            const bookingsString = JSON.stringify(formData.bookings); // Mengonversi dateBooks menjadi JSON string
+            formDataToSend.append("bookings", bookingsString);
+        } else {
+        formDataToSend.append(key, formData[key]); // Menambahkan data lainnya
+        }
+    });
+
+    setIsLoading(true);
     
     try {
-        await createBookingRoom(formData);
+        await createBookingRoom(formDataToSend);
         setFormData({
             users_id: '',
             room_id: '',
@@ -94,6 +113,7 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
             jenis_kegiatan: '',
             jenis_pengguna: '',
           });
+        setSelectedFile(null);
         
         toast.success('Booking successfully', {
             position: 'top-center',
@@ -216,7 +236,6 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                     required="" 
                     >
                         <option value="" disabled>Pilih Kegiatan</option>
-                        <option value="konsi">Konsi</option>
                         <option value="rapat">Rapat</option>
                         <option value="seminar">Seminar</option>
                         <option value="ujian">Ujian</option>
@@ -307,6 +326,30 @@ const ReservationRoomCard = ({RoomId, isOpen, handleCloseClick}) => {
                 className="w-full text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Tambah Hari
             </button>
+
+            <div className='py-2'>
+                <label htmlFor="file_path" className="flex items-start mb-1 font-semibold text-gray-700 dark:text-white">
+                    Lampiran (PDF)
+                </label>
+                <input 
+                    type="file" 
+                    name="file_path" 
+                    id="file_path" 
+                    accept="application/pdf" 
+                    onChange={(e) => 
+                        {
+                            const file = e.target.files[0];
+                            if (file && file.type !== "application/pdf") {
+                                alert("Hanya file PDF yang diperbolehkan!");
+                                setSelectedFile(null); // Reset file jika bukan PDF
+                            } else {
+                                setSelectedFile(file); // Set file PDF
+                            }
+                        }
+                    }
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                    required />
+            </div>
 
             <div className="flex items-start py-2">
                 <input

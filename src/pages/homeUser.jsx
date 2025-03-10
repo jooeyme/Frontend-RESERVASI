@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Accordion from "../components/Accordion";
+import { TataTertib } from "../components/tataTertib";
 import { jwtDecode } from "jwt-decode";
 import CalenderBooking from "../components/calenderBooking";
 
@@ -99,7 +100,8 @@ const HomeUser = () => {
     return (
       <MainLayoutUser>
         <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-6xl md:px-6">
-          <Accordion />
+          {/* <Accordion /> */}
+          <TataTertib/>
           <div className="flex justify-center home-not-logged-in mt-10 mb-4">
             <h2>Anda Belum Login! </h2>
             <p>
@@ -133,7 +135,8 @@ const HomeUser = () => {
     return (
       <MainLayoutUser>
         <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-6xl md:px-6">
-          <Accordion />
+          {/* <Accordion /> */}
+          <TataTertib/>
           <div className="pb-4">
             <div className="pt-4">
               <h1 className="text-2xl text-left font-semibold mb-8">
@@ -171,7 +174,8 @@ const HomeUser = () => {
       <>
         <MainLayoutUser>
           <div className="max-w-xl px-4 mx-auto sm:px-7 md:max-w-4xl xl:max-w-full md:px-6">
-            <Accordion />
+            {/* <Accordion /> */}
+            <TataTertib/>
             <div className="pb-4">
               <div className="pt-4">
                 <h1 className="text-2xl text-left font-semibold mb-8">

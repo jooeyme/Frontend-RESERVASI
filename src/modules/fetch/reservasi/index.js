@@ -2,7 +2,10 @@ import { instance } from "../../axios";
 
 async function createBookingRoom(formData){
     try {
-        const response = await instance.post(`/booking/room`, formData);
+        const response = await instance.post(`/booking/room`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }});
         return response.data;
     } catch (error) {
         throw new Error(error.response.data.message || "Something went wrong");
